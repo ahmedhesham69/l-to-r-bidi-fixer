@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bi-directional Text Fixer (L to R & R to L)</title>
+    <title>Bi-directional Text Fixer & Formatter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,6 +34,12 @@
         .code-font {
             font-family: 'Fira Code', monospace;
         }
+        
+        /* Custom highlight styling for text selection */
+        ::selection {
+            background-color: rgba(59, 130, 246, 0.3);
+            color: inherit;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
@@ -42,13 +48,12 @@
     <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 z-10 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- App Icon -->
                 <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md flex items-center justify-center font-bold text-sm tracking-wider">
                     LTR ⇄ RTL
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 dark:text-white">مُصلح اتجاه النصوص</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-directional Arabic/English Text Fixer</p>
+                    <h1 class="text-lg font-bold text-slate-900 dark:text-white">مُنسق ومُصلح اتجاه النصوص</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-directional Arabic/English Text Fixer & Formatter</p>
                 </div>
             </div>
             
@@ -73,7 +78,7 @@
             <!-- Sidebar / Control Panel -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">خيارات الإصلاح / Fix Options</h2>
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">خيارات التنسيق والإصلاح / Options</h2>
                     
                     <div class="space-y-4">
                         <!-- Auto Align -->
@@ -81,7 +86,7 @@
                             <input type="checkbox" id="optAutoAlign" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
                             <div>
                                 <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">محاذاة تلقائية للفقرات (Auto-Align)</span>
-                                <span class="block text-xs text-slate-500">يحدد اتجاه السطر تلقائياً بناءً على اللغة (عربي / إنجليزي)</span>
+                                <span class="block text-xs text-slate-500">تعديل اتجاه السطر تلقائياً حسب اللغة المكتوبة</span>
                             </div>
                         </label>
                         
@@ -90,7 +95,16 @@
                             <input type="checkbox" id="optFixPunctuation" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
                             <div>
                                 <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">إصلاح علامات الترقيم والأقواس</span>
-                                <span class="block text-xs text-slate-500">يمنع علامات الترقيم والأقواس من القفز للجهة الخاطئة في النصوص المشتركة</span>
+                                <span class="block text-xs text-slate-500">منع علامات الترقيم من الانتقال للجهة المقابلة بشكل خاطئ</span>
+                            </div>
+                        </label>
+
+                        <!-- Enable Rich Formatting (Markdown) -->
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="optRichFormat" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                            <div>
+                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">تفعيل التنسيق الذكي (Rich Markdown)</span>
+                                <span class="block text-xs text-slate-500">تنسيق العناوين (#)، الخط العريض (**)، والتظليل (==) تلقائياً</span>
                             </div>
                         </label>
                         
@@ -99,7 +113,7 @@
                             <input type="checkbox" id="optStripLineNumbers" class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
                             <div>
                                 <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">حذف أرقام السطور (Strip Numbers)</span>
-                                <span class="block text-xs text-slate-500">يزيل الترقيم التلقائي من بداية السطور مثل (1: أو 1. أو [1])</span>
+                                <span class="block text-xs text-slate-500">تنظيف السطور من الترقيم التلقائي في البداية (مثال 1: أو 1.)</span>
                             </div>
                         </label>
 
@@ -115,11 +129,16 @@
                     </div>
                 </div>
 
-                <!-- Info Box -->
-                <div class="bg-blue-50 dark:bg-blue-950/30 p-6 rounded-xl border border-blue-100 dark:border-blue-900/50 shadow-sm transition-colors text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
-                    <h3 class="font-bold text-blue-800 dark:text-blue-400 text-sm">💡 لماذا تحدث هذه المشكلة؟</h3>
-                    <p>عند دمج كلمات عربية (تُكتب من اليمين) مع كلمات أو رموز إنجليزية (تُكتب من اليسار)، يرتبك المتصفح أو محرر النصوص في تحديد اتجاه علامات الترقيم والرموز الخاصة مثل الأقواس أو النقطة.</p>
-                    <p>يقوم هذا التطبيق بحقن <strong>علامات اتجاه خفية (Unicode Direction Marks)</strong> لتوجيه نظام العرض لعرض السطر بالشكل البصري الصحيح تماماً دون تغيير الحروف الفعلية.</p>
+                <!-- Formatting Legend Guide -->
+                <div class="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-xs space-y-3">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">💡 دليل التنسيق السريع</h3>
+                    <ul class="space-y-2 text-slate-600 dark:text-slate-400">
+                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded"># عنوان رئيسي</span> → خط كبير وعريض جداً</li>
+                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">## عنوان فرعي</span> → خط عريض متوسط</li>
+                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">**نص عريض**</span> → يجعل الخط عريضاً</li>
+                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">==تحديد نص==</span> → يضيف خلفية ملونة مميزة</li>
+                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">`رمز برمجي`</span> → خط كود أحادي المسافة</li>
+                    </ul>
                 </div>
             </div>
 
@@ -129,7 +148,7 @@
                     
                     <!-- Editor Headers -->
                     <div class="border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-6 py-4">
-                        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">المدخلات والمخرجات (Editor & Preview)</h2>
+                        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">المدخلات والمعاينة (Editor & Formatted Preview)</h2>
                         <div class="flex items-center space-x-2">
                             <button id="btnClear" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 flex items-center">
                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -145,10 +164,12 @@
                     <!-- Input / Textarea -->
                     <div class="p-6 space-y-4">
                         <div>
-                            <label for="inputText" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">أدخل النص هنا (Paste mixed text here)</label>
+                            <label for="inputText" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">أدخل النص هنا (Supports Markdown & Mixed Directions)</label>
                             <textarea id="inputText" class="w-full min-h-[160px] p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none code-font transition text-base" placeholder="مثال:
-1: This is Arabic text (مرحباً بالعالم!) with english mixed.
-2: هاتف الدعم الفني هو +966-1234567."></textarea>
+# هذا عنوان رئيسي عريض جداً
+## وعنوان فرعي أصغر
+يمكنك كتابة **نص عريض لتوضيح الكلمات الهامة** أو استخدام ==تحديد أصفر عريض== للفت الانتباه.
+1: سطر يحتوي على اتجاهات مختلطة (English and Arabic mix)."></textarea>
                         </div>
 
                         <!-- Divider -->
@@ -157,7 +178,7 @@
                                 <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
                             </div>
                             <div class="relative flex justify-center text-xs uppercase">
-                                <span class="bg-white dark:bg-slate-950 px-2 text-slate-400">المعاينة والنتيجة (Formatted Output)</span>
+                                <span class="bg-white dark:bg-slate-950 px-2 text-slate-400">المعاينة النهائية المنسقة (Formatted Output)</span>
                             </div>
                         </div>
 
@@ -167,12 +188,12 @@
                                 <span id="statsLabel" class="text-xs text-slate-500">الأحرف: 0 | الكلمات: 0</span>
                                 <button id="btnCopy" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center space-x-1">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                    <span>نسخ النتيجة (Copy)</span>
+                                    <span>نسخ النتيجة المنسقة (Copy)</span>
                                 </button>
                             </div>
                             
-                            <!-- Preview Box -->
-                            <div id="outputPreview" class="w-full min-h-[160px] p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 transition text-base overflow-auto whitespace-pre-wrap code-font text-left" style="direction: ltr;"></div>
+                            <!-- Preview Box with custom selections and clean styling -->
+                            <div id="outputPreview" class="w-full min-h-[180px] p-6 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 transition text-base overflow-auto whitespace-pre-wrap leading-relaxed"></div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +204,7 @@
 
     <!-- Footer -->
     <footer class="mt-12 py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 transition-colors">
-        <p>L to R & R to L Mixed Text Fixer &bull; Created for quick mixed-text visual rendering repairs.</p>
+        <p>L to R & R to L Mixed Text Fixer & Formatter &bull; Optimized Visual Rendering.</p>
     </footer>
 
     <!-- App Logic -->
@@ -196,6 +217,7 @@
         const themeToggle = document.getElementById('themeToggle');
         const optAutoAlign = document.getElementById('optAutoAlign');
         const optFixPunctuation = document.getElementById('optFixPunctuation');
+        const optRichFormat = document.getElementById('optRichFormat');
         const optStripLineNumbers = document.getElementById('optStripLineNumbers');
         
         const btnDirAuto = document.getElementById('btnDirAuto');
@@ -284,6 +306,34 @@
             return arabicPattern.test(text);
         }
 
+        // Parse markdown text markup to safe HTML
+        function parseMarkdownMarkup(text) {
+            // Escape HTML entities to prevent XSS
+            let html = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            if (!optRichFormat.checked) return html;
+
+            // Headings (# Heading, ## Heading, ### Heading)
+            html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl font-bold border-b border-slate-200 dark:border-slate-800 pb-1.5 mb-3 mt-1">$1</h1>');
+            html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-xl font-bold border-b border-slate-100 dark:border-slate-900/50 pb-1 mb-2 mt-3">$1</h2>');
+            html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg font-bold mb-1.5 mt-2">$1</h3>');
+            
+            // Bold (**text** or __text__)
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
+            html = html.replace(/__(.*?)__/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
+            
+            // Highlights (==text==)
+            html = html.replace(/==(.*?)==/g, '<mark class="bg-yellow-200 dark:bg-yellow-950/80 text-yellow-900 dark:text-yellow-100 px-1 py-0.5 rounded font-semibold">$1</mark>');
+            
+            // Inline Code (`code`)
+            html = html.replace(/`(.*?)`/g, '<code class="code-font text-sm bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-400">$1</code>');
+            
+            return html;
+        }
+
         // Process Text function
         function processText() {
             const text = inputText.value;
@@ -327,12 +377,20 @@
                     processedLine = RLM + processedLine;
                 }
                 
+                // Parse formatting (Markdown)
+                const formattedHtml = parseMarkdownMarkup(processedLine);
+                
                 // Create preview element
                 const div = document.createElement('div');
-                div.className = 'py-0.5 min-h-[1.5rem]';
+                
+                // Dynamic border and background indicators based on direction for visual clarity
+                const directionBorder = dir === 'rtl' 
+                    ? 'border-r-2 border-blue-500/40 pr-3 text-right' 
+                    : 'border-l-2 border-emerald-500/40 pl-3 text-left';
+                
+                div.className = `py-1 min-h-[1.75rem] transition-all hover:bg-slate-100 dark:hover:bg-slate-900/60 rounded px-2 -mx-2 ${directionBorder}`;
                 div.style.direction = dir;
-                div.style.textAlign = dir === 'rtl' ? 'right' : 'left';
-                div.textContent = processedLine;
+                div.innerHTML = formattedHtml;
                 
                 outputPreview.appendChild(div);
             });
@@ -361,6 +419,7 @@
         inputText.addEventListener('input', processText);
         optAutoAlign.addEventListener('change', processText);
         optFixPunctuation.addEventListener('change', processText);
+        optRichFormat.addEventListener('change', processText);
         optStripLineNumbers.addEventListener('change', processText);
 
         // Initial Run
