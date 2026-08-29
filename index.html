@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bi-directional Text Fixer (L to R & R to L)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f7ff',
+                            100: '#ebeeef',
+                            200: '#d7dbdf',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Cairo', sans-serif;
+        }
+        
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+    <!-- Header -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 z-10 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- App Icon -->
+                <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md flex items-center justify-center font-bold text-sm tracking-wider">
+                    LTR ⇄ RTL
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 dark:text-white">مُصلح اتجاه النصوص</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-directional Arabic/English Text Fixer</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <!-- Theme Toggle -->
+                <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="Toggle theme">
+                    <!-- Sun Icon -->
+                    <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828-9.9a5 5 0 11-7.07 7.07 5 5 0 017.07-7.07z"/></svg>
+                    <!-- Moon Icon -->
+                    <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- App Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Sidebar / Control Panel -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">خيارات الإصلاح / Fix Options</h2>
+                    
+                    <div class="space-y-4">
+                        <!-- Auto Align -->
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="optAutoAlign" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                            <div>
+                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">محاذاة تلقائية للفقرات (Auto-Align)</span>
+                                <span class="block text-xs text-slate-500">يحدد اتجاه السطر تلقائياً بناءً على اللغة (عربي / إنجليزي)</span>
+                            </div>
+                        </label>
+                        
+                        <!-- Fix Bidi Punctuation -->
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="optFixPunctuation" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                            <div>
+                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">إصلاح علامات الترقيم والأقواس</span>
+                                <span class="block text-xs text-slate-500">يمنع علامات الترقيم والأقواس من القفز للجهة الخاطئة في النصوص المشتركة</span>
+                            </div>
+                        </label>
+                        
+                        <!-- Strip Line Numbers -->
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="optStripLineNumbers" class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                            <div>
+                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">حذف أرقام السطور (Strip Numbers)</span>
+                                <span class="block text-xs text-slate-500">يزيل الترقيم التلقائي من بداية السطور مثل (1: أو 1. أو [1])</span>
+                            </div>
+                        </label>
+
+                        <!-- Force Direction Group -->
+                        <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                            <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">إجبار الاتجاه (Force Direction)</span>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button id="btnDirAuto" class="py-1.5 px-3 text-xs font-semibold rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 transition hover:bg-blue-100 dark:hover:bg-blue-900/50">تلقائي</button>
+                                <button id="btnDirRtl" class="py-1.5 px-3 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">RTL (عربي)</button>
+                                <button id="btnDirLtr" class="py-1.5 px-3 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">LTR (EN)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-blue-50 dark:bg-blue-950/30 p-6 rounded-xl border border-blue-100 dark:border-blue-900/50 shadow-sm transition-colors text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
+                    <h3 class="font-bold text-blue-800 dark:text-blue-400 text-sm">💡 لماذا تحدث هذه المشكلة؟</h3>
+                    <p>عند دمج كلمات عربية (تُكتب من اليمين) مع كلمات أو رموز إنجليزية (تُكتب من اليسار)، يرتبك المتصفح أو محرر النصوص في تحديد اتجاه علامات الترقيم والرموز الخاصة مثل الأقواس أو النقطة.</p>
+                    <p>يقوم هذا التطبيق بحقن <strong>علامات اتجاه خفية (Unicode Direction Marks)</strong> لتوجيه نظام العرض لعرض السطر بالشكل البصري الصحيح تماماً دون تغيير الحروف الفعلية.</p>
+                </div>
+            </div>
+
+            <!-- Editor / Output -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors overflow-hidden">
+                    
+                    <!-- Editor Headers -->
+                    <div class="border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-6 py-4">
+                        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">المدخلات والمخرجات (Editor & Preview)</h2>
+                        <div class="flex items-center space-x-2">
+                            <button id="btnClear" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 flex items-center">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                مسح الكل
+                            </button>
+                            <button id="btnPaste" class="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition flex items-center">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                لصق النص
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input / Textarea -->
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label for="inputText" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">أدخل النص هنا (Paste mixed text here)</label>
+                            <textarea id="inputText" class="w-full min-h-[160px] p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none code-font transition text-base" placeholder="مثال:
+1: This is Arabic text (مرحباً بالعالم!) with english mixed.
+2: هاتف الدعم الفني هو +966-1234567."></textarea>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="relative py-2">
+                            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+                            </div>
+                            <div class="relative flex justify-center text-xs uppercase">
+                                <span class="bg-white dark:bg-slate-950 px-2 text-slate-400">المعاينة والنتيجة (Formatted Output)</span>
+                            </div>
+                        </div>
+
+                        <!-- Output / Preview Area -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span id="statsLabel" class="text-xs text-slate-500">الأحرف: 0 | الكلمات: 0</span>
+                                <button id="btnCopy" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center space-x-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                    <span>نسخ النتيجة (Copy)</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Preview Box -->
+                            <div id="outputPreview" class="w-full min-h-[160px] p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 transition text-base overflow-auto whitespace-pre-wrap code-font text-left" style="direction: ltr;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 transition-colors">
+        <p>L to R & R to L Mixed Text Fixer &bull; Created for quick mixed-text visual rendering repairs.</p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // Constants for Unicode markers
+        const LRM = '\u200E'; // Left-to-Right Mark
+        const RLM = '\u200F'; // Right-to-Left Mark
+        
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const optAutoAlign = document.getElementById('optAutoAlign');
+        const optFixPunctuation = document.getElementById('optFixPunctuation');
+        const optStripLineNumbers = document.getElementById('optStripLineNumbers');
+        
+        const btnDirAuto = document.getElementById('btnDirAuto');
+        const btnDirRtl = document.getElementById('btnDirRtl');
+        const btnDirLtr = document.getElementById('btnDirLtr');
+        
+        const btnClear = document.getElementById('btnClear');
+        const btnPaste = document.getElementById('btnPaste');
+        const btnCopy = document.getElementById('btnCopy');
+        
+        const inputText = document.getElementById('inputText');
+        const outputPreview = document.getElementById('outputPreview');
+        const statsLabel = document.getElementById('statsLabel');
+        
+        let forceDirection = 'auto'; // 'auto', 'rtl', 'ltr'
+
+        // Theme Toggle Logic
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Force direction buttons styling handler
+        function setForceDirection(mode) {
+            forceDirection = mode;
+            [btnDirAuto, btnDirRtl, btnDirLtr].forEach(btn => {
+                btn.classList.remove('bg-blue-50', 'dark:bg-blue-950/40', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-900');
+                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-800');
+            });
+            
+            let activeBtn;
+            if (mode === 'auto') activeBtn = btnDirAuto;
+            else if (mode === 'rtl') activeBtn = btnDirRtl;
+            else if (mode === 'ltr') activeBtn = btnDirLtr;
+            
+            activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-800');
+            activeBtn.classList.add('bg-blue-50', 'dark:bg-blue-950/40', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-900');
+            
+            processText();
+        }
+
+        btnDirAuto.addEventListener('click', () => setForceDirection('auto'));
+        btnDirRtl.addEventListener('click', () => setForceDirection('rtl'));
+        btnDirLtr.addEventListener('click', () => setForceDirection('ltr'));
+
+        // Clear and Paste Buttons
+        btnClear.addEventListener('click', () => {
+            inputText.value = '';
+            processText();
+        });
+
+        btnPaste.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputText.value = text;
+                processText();
+            } catch (err) {
+                alert('Could not read clipboard. Please paste manually (Ctrl+V).');
+            }
+        });
+
+        // Copy Button
+        btnCopy.addEventListener('click', () => {
+            const rawOutput = getProcessedTextRaw();
+            navigator.clipboard.writeText(rawOutput).then(() => {
+                const originalText = btnCopy.innerHTML;
+                btnCopy.innerHTML = `
+                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>تم النسخ!</span>
+                `;
+                btnCopy.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                btnCopy.classList.add('bg-slate-600');
+                
+                setTimeout(() => {
+                    btnCopy.innerHTML = originalText;
+                    btnCopy.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                    btnCopy.classList.remove('bg-slate-600');
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy text.');
+            });
+        });
+
+        // Check if text has Arabic characters
+        function hasArabic(text) {
+            const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+            return arabicPattern.test(text);
+        }
+
+        // Process Text function
+        function processText() {
+            const text = inputText.value;
+            
+            // Statistics
+            const chars = text.length;
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            statsLabel.textContent = `الأحرف: ${chars} | الكلمات: ${words}`;
+            
+            // HTML Live Preview Construction
+            outputPreview.innerHTML = '';
+            const lines = text.split('\n');
+            
+            lines.forEach((line) => {
+                let processedLine = line;
+                
+                // 1. Strip Line Numbers
+                if (optStripLineNumbers.checked) {
+                    processedLine = processedLine.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
+                }
+                
+                // Determine direction
+                let dir = 'ltr';
+                if (forceDirection === 'rtl') {
+                    dir = 'rtl';
+                } else if (forceDirection === 'ltr') {
+                    dir = 'ltr';
+                } else {
+                    // Auto-align logic based on content
+                    if (optAutoAlign.checked) {
+                        dir = hasArabic(processedLine) ? 'rtl' : 'ltr';
+                    }
+                }
+                
+                // 2. Fix Bidi Punctuation / Brackets logic
+                if (optFixPunctuation.checked && hasArabic(processedLine)) {
+                    // Add RLM after punctuation/brackets to bind them to the RTL context
+                    processedLine = processedLine.replace(/([.!?()\[\]{}""'':;,-]+)/g, `$1${RLM}`);
+                    
+                    // Prefix the whole line with RLM to ensure correct start
+                    processedLine = RLM + processedLine;
+                }
+                
+                // Create preview element
+                const div = document.createElement('div');
+                div.className = 'py-0.5 min-h-[1.5rem]';
+                div.style.direction = dir;
+                div.style.textAlign = dir === 'rtl' ? 'right' : 'left';
+                div.textContent = processedLine;
+                
+                outputPreview.appendChild(div);
+            });
+        }
+
+        // Get raw text representation of processed text for copy function
+        function getProcessedTextRaw() {
+            const lines = inputText.value.split('\n');
+            const processedLines = lines.map(line => {
+                let processedLine = line;
+                
+                if (optStripLineNumbers.checked) {
+                    processedLine = processedLine.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
+                }
+                
+                if (optFixPunctuation.checked && hasArabic(processedLine)) {
+                    processedLine = processedLine.replace(/([.!?()\[\]{}""'':;,-]+)/g, `$1${RLM}`);
+                    processedLine = RLM + processedLine;
+                }
+                return processedLine;
+            });
+            return processedLines.join('\n');
+        }
+
+        // Event Listeners for real-time updates
+        inputText.addEventListener('input', processText);
+        optAutoAlign.addEventListener('change', processText);
+        optFixPunctuation.addEventListener('change', processText);
+        optStripLineNumbers.addEventListener('change', processText);
+
+        // Initial Run
+        processText();
+    </script>
+</body>
+</html>
