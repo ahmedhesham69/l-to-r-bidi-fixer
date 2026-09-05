@@ -1,23 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ar" dir="rtl" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bi-directional Text Fixer & Formatter</title>
+    <title>مُنسق ومُصلح النصوص والرموز الرياضية (Apple Focus Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Apple SF Pro / Cairo Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- KaTeX for Mathematical Formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#f5f7ff',
-                            100: '#ebeeef',
-                            200: '#d7dbdf',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
+                        apple: {
+                            blue: '#0071E3',
+                            blueHover: '#0077ED',
+                            grayBg: '#F5F5F7',
+                            cardBg: '#FFFFFF',
+                            darkBg: '#000000',
+                            darkCard: '#1C1C1E',
+                            darkCardAlt: '#2C2C2E',
+                            borderLight: 'rgba(0, 0, 0, 0.07)',
+                            borderDark: 'rgba(255, 255, 255, 0.09)',
                         }
                     }
                 }
@@ -25,236 +38,775 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
-        
-        body {
-            font-family: 'Inter', 'Cairo', sans-serif;
+        body,
+        textarea,
+        input,
+        button,
+        select {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", 'Cairo', 'Segoe UI', Roboto, sans-serif !important;
+            letter-spacing: -0.01em;
         }
-        
-        .code-font {
-            font-family: 'Fira Code', monospace;
+
+        .font-code,
+        pre,
+        code {
+            font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace !important;
         }
-        
-        /* Custom highlight styling for text selection */
+
         ::selection {
-            background-color: rgba(59, 130, 246, 0.3);
+            background-color: rgba(0, 113, 227, 0.25);
             color: inherit;
+        }
+
+        /* Apple frosted glass cards */
+        .apple-card {
+            background-color: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dark .apple-card {
+            background-color: rgba(28, 28, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Native iOS Switch */
+        .apple-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .apple-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .apple-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #E5E5EA;
+            transition: 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-radius: 9999px;
+        }
+
+        .dark .apple-slider {
+            background-color: #3A3A3C;
+        }
+
+        .apple-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            right: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .apple-switch input:checked+.apple-slider {
+            background-color: #0071E3;
+        }
+
+        .apple-switch input:checked+.apple-slider:before {
+            transform: translateX(-20px);
+        }
+
+        /* Smooth scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.25);
+            border-radius: 9999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(150, 150, 150, 0.4);
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 0;
+            margin: 0.6em 0 !important;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
-    <!-- Header -->
-    <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 z-10 transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md flex items-center justify-center font-bold text-sm tracking-wider">
-                    LTR ⇄ RTL
+<body
+    class="bg-[#F5F5F7] dark:bg-[#000000] text-[#1D1D1F] dark:text-[#F5F5F7] min-h-screen transition-colors duration-300">
+
+    <!-- Apple Translucent Header -->
+    <header
+        class="border-b border-black/[0.06] dark:border-white/[0.08] bg-white/75 dark:bg-[#161617]/75 backdrop-blur-2xl sticky top-0 z-30 transition-colors">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div
+                    class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0071E3] to-[#1D4ED8] shadow-[0_4px_12px_rgba(0,113,227,0.3)] flex items-center justify-center text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 dark:text-white">مُنسق ومُصلح اتجاه النصوص</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Bi-directional Arabic/English Text Fixer & Formatter</p>
+                    <h1
+                        class="text-base sm:text-lg font-semibold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-2">
+                        مُنسق ومُصلح النصوص
+                    </h1>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-2">
-                <!-- Theme Toggle -->
-                <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="Toggle theme">
-                    <!-- Sun Icon -->
-                    <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828-9.9a5 5 0 11-7.07 7.07 5 5 0 017.07-7.07z"/></svg>
-                    <!-- Moon Icon -->
-                    <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+
+            <div class="flex items-center gap-2">
+                <!-- Options / Settings Modal Trigger -->
+                <button id="btnOpenSettings"
+                    class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+                    <svg class="w-4 h-4 text-[#0071E3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>خيارات التنسيق</span>
+                </button>
+
+                <!-- Help / Guide Button -->
+                <button id="btnOpenHelp"
+                    class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span>الدليل</span>
+                </button>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggle"
+                    class="w-8 h-8 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white flex items-center justify-center transition active:scale-90"
+                    aria-label="Toggle theme">
+                    <svg id="sunIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828-9.9a5 5 0 11-7.07 7.07 5 5 0 017.07-7.07z" />
+                    </svg>
+                    <svg id="moonIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- App Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- Sidebar / Control Panel -->
-            <div class="lg:col-span-4 space-y-6">
-                <div class="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">خيارات التنسيق والإصلاح / Options</h2>
-                    
-                    <div class="space-y-4">
-                        <!-- Auto Align -->
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" id="optAutoAlign" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
-                            <div>
-                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">محاذاة تلقائية للفقرات (Auto-Align)</span>
-                                <span class="block text-xs text-slate-500">تعديل اتجاه السطر تلقائياً حسب اللغة المكتوبة</span>
-                            </div>
-                        </label>
-                        
-                        <!-- Fix Bidi Punctuation -->
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" id="optFixPunctuation" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
-                            <div>
-                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">إصلاح علامات الترقيم والأقواس</span>
-                                <span class="block text-xs text-slate-500">منع علامات الترقيم من الانتقال للجهة المقابلة بشكل خاطئ</span>
-                            </div>
-                        </label>
+    <!-- Main Container (Centered Focus on Text) -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
-                        <!-- Enable Rich Formatting (Markdown) -->
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" id="optRichFormat" checked class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
-                            <div>
-                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">تفعيل التنسيق الذكي (Rich Markdown)</span>
-                                <span class="block text-xs text-slate-500">تنسيق العناوين (#)، الخط العريض (**)، والتظليل (==) تلقائياً</span>
-                            </div>
-                        </label>
-                        
-                        <!-- Strip Line Numbers -->
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" id="optStripLineNumbers" class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
-                            <div>
-                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition">حذف أرقام السطور (Strip Numbers)</span>
-                                <span class="block text-xs text-slate-500">تنظيف السطور من الترقيم التلقائي في البداية (مثال 1: أو 1.)</span>
-                            </div>
-                        </label>
+        <!-- Apple Focus Toolbar (Quick tools & Direction integrated at the top) -->
+        <div class="apple-card px-5 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-sm">
 
-                        <!-- Force Direction Group -->
-                        <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
-                            <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">إجبار الاتجاه (Force Direction)</span>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button id="btnDirAuto" class="py-1.5 px-3 text-xs font-semibold rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 transition hover:bg-blue-100 dark:hover:bg-blue-900/50">تلقائي</button>
-                                <button id="btnDirRtl" class="py-1.5 px-3 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">RTL (عربي)</button>
-                                <button id="btnDirLtr" class="py-1.5 px-3 text-xs font-semibold rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">LTR (EN)</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Formatting Legend Guide -->
-                <div class="bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors text-xs space-y-3">
-                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">💡 دليل التنسيق السريع</h3>
-                    <ul class="space-y-2 text-slate-600 dark:text-slate-400">
-                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded"># عنوان رئيسي</span> → خط كبير وعريض جداً</li>
-                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">## عنوان فرعي</span> → خط عريض متوسط</li>
-                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">**نص عريض**</span> → يجعل الخط عريضاً</li>
-                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">==تحديد نص==</span> → يضيف خلفية ملونة مميزة</li>
-                        <li><span class="font-mono text-blue-500 bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">`رمز برمجي`</span> → خط كود أحادي المسافة</li>
-                    </ul>
-                </div>
+            <!-- Quick Insert Buttons -->
+            <div class="flex items-center flex-wrap gap-2">
+                <span class="text-xs font-semibold text-[#86868B] ml-1">إدراج سريع:</span>
+                <button id="btnInsertTable"
+                    class="py-1.5 px-3 rounded-xl bg-[#0071E3]/10 hover:bg-[#0071E3]/20 text-[#0071E3] text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>جدول</span>
+                </button>
+                <button id="btnInsertMath"
+                    class="py-1.5 px-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
+                    <span class="font-serif italic font-bold">∑</span>
+                    <span>معادلة</span>
+                </button>
+                <!-- Quick Symbols Palette Toggle -->
+                <button id="btnToggleSymbols"
+                    class="py-1.5 px-3 rounded-xl bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold text-slate-700 dark:text-slate-200 transition active:scale-95 flex items-center gap-1">
+                    <span>π الرموز الرياضية</span>
+                    <svg id="arrowSymbols" class="w-3 h-3 text-[#86868B] transition-transform duration-200" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Editor / Output -->
-            <div class="lg:col-span-8 space-y-6">
-                <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors overflow-hidden">
-                    
-                    <!-- Editor Headers -->
-                    <div class="border-b border-slate-200 dark:border-slate-800 flex justify-between items-center px-6 py-4">
-                        <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">المدخلات والمعاينة (Editor & Formatted Preview)</h2>
-                        <div class="flex items-center space-x-2">
-                            <button id="btnClear" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 flex items-center">
-                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                مسح الكل
-                            </button>
-                            <button id="btnPaste" class="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition flex items-center">
-                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                لصق النص
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Input / Textarea -->
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <label for="inputText" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">أدخل النص هنا (Supports Markdown & Mixed Directions)</label>
-                            <textarea id="inputText" class="w-full min-h-[160px] p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none code-font transition text-base" placeholder="مثال:
-# هذا عنوان رئيسي عريض جداً
-## وعنوان فرعي أصغر
-يمكنك كتابة **نص عريض لتوضيح الكلمات الهامة** أو استخدام ==تحديد أصفر عريض== للفت الانتباه.
-1: سطر يحتوي على اتجاهات مختلطة (English and Arabic mix)."></textarea>
-                        </div>
-
-                        <!-- Divider -->
-                        <div class="relative py-2">
-                            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                                <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
-                            </div>
-                            <div class="relative flex justify-center text-xs uppercase">
-                                <span class="bg-white dark:bg-slate-950 px-2 text-slate-400">المعاينة النهائية المنسقة (Formatted Output)</span>
-                            </div>
-                        </div>
-
-                        <!-- Output / Preview Area -->
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span id="statsLabel" class="text-xs text-slate-500">الأحرف: 0 | الكلمات: 0</span>
-                                <button id="btnCopy" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center space-x-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                    <span>نسخ النتيجة المنسقة (Copy)</span>
-                                </button>
-                            </div>
-                            
-                            <!-- Preview Box with custom selections and clean styling -->
-                            <div id="outputPreview" class="w-full min-h-[180px] p-6 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 transition text-base overflow-auto whitespace-pre-wrap leading-relaxed"></div>
-                        </div>
-                    </div>
+            <!-- Force Direction Segmented Control -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-[#86868B]">الاتجاه:</span>
+                <div class="bg-black/[0.05] dark:bg-white/[0.08] p-1 rounded-xl flex items-center gap-0.5 shadow-inner">
+                    <button id="btnDirAuto"
+                        class="py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-[#0071E3] dark:text-blue-400 shadow-sm">تلقائي</button>
+                    <button id="btnDirRtl"
+                        class="py-1 px-3 text-xs font-medium rounded-lg transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white">RTL</button>
+                    <button id="btnDirLtr"
+                        class="py-1 px-3 text-xs font-medium rounded-lg transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white">LTR</button>
                 </div>
             </div>
-
         </div>
+
+        <!-- Collapsible Symbols Palette -->
+        <div id="symbolsPalette"
+            class="hidden apple-card p-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-[#86868B]">انقر لإدراج أي رمز مباشرة في النص:</span>
+                <button id="btnCloseSymbols"
+                    class="text-xs text-[#86868B] hover:text-slate-900 dark:hover:text-white">إغلاق</button>
+            </div>
+            <div class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 text-center font-code">
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="√">√</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="π">π</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="±">±</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="≠">≠</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="≤">≤</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="≥">≥</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="∞">∞</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="∑">∑</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="∫">∫</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="θ">θ</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="²">²</button>
+                <button
+                    class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90"
+                    data-sym="³">³</button>
+            </div>
+        </div>
+
+        <!-- Main Editor & Preview Card (Spacious Focus Area) -->
+        <div class="apple-card rounded-3xl overflow-hidden shadow-sm">
+
+            <!-- Editor Subheader -->
+            <div
+                class="border-b border-black/[0.05] dark:border-white/[0.06] flex justify-between items-center px-6 py-4 bg-black/[0.01] dark:bg-white/[0.02]">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#FF5F56]/90"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#FFBD2E]/90"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#27C93F]/90"></span>
+                    <span class="text-xs font-medium text-[#86868B] mr-2">مساحة الكتابة المركزة</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btnClear"
+                        class="text-xs px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center gap-1 active:scale-95 font-medium">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        مسح
+                    </button>
+                    <button id="btnPaste"
+                        class="text-xs px-4 py-1.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white transition flex items-center gap-1 shadow-[0_2px_8px_rgba(0,113,227,0.3)] active:scale-95 font-medium">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        لصق
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-6 space-y-6">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="inputText"
+                            class="block text-xs font-bold text-[#86868B] uppercase tracking-wider">النص الأصلي (اكتب أو
+                            الصق هنا)</label>
+                        <button type="button" class="text-[11px] text-[#0071E3] hover:underline cursor-pointer"
+                            onclick="insertExampleText()">تجربة نص نموذجي</button>
+                    </div>
+                    <textarea id="inputText"
+                        class="w-full min-h-[200px] p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.03] focus:ring-2 focus:ring-[#0071E3]/30 focus:border-[#0071E3] focus:bg-white dark:focus:bg-[#1C1C1E] outline-none transition-all duration-200 text-sm md:text-base leading-relaxed text-[#1D1D1F] dark:text-white resize-y"
+                        placeholder="الصق النص هنا للبدء في تنسيقه وإصلاح اتجاهاته تلقائياً..."></textarea>
+                </div>
+
+                <!-- Sleek Divider -->
+                <div class="relative py-1">
+                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div class="w-full border-t border-black/[0.06] dark:border-white/[0.08]"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs uppercase">
+                        <span
+                            class="bg-white/95 dark:bg-[#1C1C1E]/95 px-3 text-[#86868B] font-semibold tracking-wider rounded-full">المعاينة
+                            المنسقة الحية</span>
+                    </div>
+                </div>
+
+                <!-- Output / Preview Area -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span id="statsLabel" class="text-xs text-[#86868B]">الأحرف: 0 | الكلمات: 0</span>
+                        <button id="btnCopy"
+                            class="text-xs px-4 py-2 rounded-full bg-[#34C759] hover:bg-[#2EB84F] text-white font-semibold transition-all duration-200 flex items-center gap-1.5 shadow-[0_4px_12px_rgba(52,199,89,0.3)] active:scale-95">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            <span>نسخ النتيجة (Copy)</span>
+                        </button>
+                    </div>
+
+                    <div id="outputPreview"
+                        class="w-full min-h-[240px] p-6 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.02] transition-colors text-base overflow-auto leading-relaxed">
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Footer -->
-    <footer class="mt-12 py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 transition-colors">
-        <p>L to R & R to L Mixed Text Fixer & Formatter &bull; Optimized Visual Rendering.</p>
+    <footer
+        class="mt-12 py-8 border-t border-black/[0.06] dark:border-white/[0.08] text-center text-xs text-[#86868B] transition-colors">
+        <p>مُنسق ومُصلح النصوص والرموز الرياضية &bull; Minimalist Apple Focus View.</p>
     </footer>
+
+    <!-- Settings / Options Modal (Popup Sheet) -->
+    <div id="settingsModal"
+        class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
+        <div
+            class="apple-card border border-black/[0.08] dark:border-white/[0.12] rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+
+            <div
+                class="p-5 border-b border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#0071E3] text-white flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-semibold text-[#1D1D1F] dark:text-white">خيارات التنسيق والإصلاح</h3>
+                </div>
+                <button id="btnCloseSettings"
+                    class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.15] text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 divide-y divide-black/[0.05] dark:divide-white/[0.06] text-sm">
+                <!-- Auto Align -->
+                <div class="flex items-center justify-between py-3">
+                    <div class="pl-3">
+                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">محاذاة تلقائية
+                            للفقرات</span>
+                        <span class="block text-xs text-[#86868B]">تحديد الاتجاه حسب اللغة المكتوبة</span>
+                    </div>
+                    <label class="apple-switch">
+                        <input type="checkbox" id="optAutoAlign" checked>
+                        <span class="apple-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Fix Bidi Punctuation -->
+                <div class="flex items-center justify-between py-3">
+                    <div class="pl-3">
+                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">إصلاح علامات
+                            الترقيم</span>
+                        <span class="block text-xs text-[#86868B]">منع قفز الأقواس والنقاط للجهة المقابلة</span>
+                    </div>
+                    <label class="apple-switch">
+                        <input type="checkbox" id="optFixPunctuation" checked>
+                        <span class="apple-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Enable Rich Formatting -->
+                <div class="flex items-center justify-between py-3">
+                    <div class="pl-3">
+                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">الجداول والمعادلات
+                            والأكواد</span>
+                        <span class="block text-xs text-[#86868B]">تفعيل تنسيقات Markdown وصيغ KaTeX</span>
+                    </div>
+                    <label class="apple-switch">
+                        <input type="checkbox" id="optRichFormat" checked>
+                        <span class="apple-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Strip Line Numbers -->
+                <div class="flex items-center justify-between py-3">
+                    <div class="pl-3">
+                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">حذف أرقام السطور</span>
+                        <span class="block text-xs text-[#86868B]">تنظيف ترقيم البداية مثل 1: أو 1.</span>
+                    </div>
+                    <label class="apple-switch">
+                        <input type="checkbox" id="optStripLineNumbers">
+                        <span class="apple-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div
+                class="p-4 border-t border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] flex justify-end">
+                <button id="btnCloseSettingsFooter"
+                    class="px-5 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold transition active:scale-95">
+                    حفظ وإغلاق
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Apple Sheet Modal (Popup Guide) -->
+    <div id="helpModal"
+        class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
+        <div
+            class="apple-card border border-black/[0.08] dark:border-white/[0.12] rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-250">
+
+            <div
+                class="p-5 border-b border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#0071E3] text-white flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-semibold text-[#1D1D1F] dark:text-white">دليل التعليمات
+                            والرموز المتاحة</h3>
+                        <p class="text-xs text-[#86868B]">طريقة كتابة الأكواد، الجداول، الرموز الرياضية، والتنسيقات</p>
+                    </div>
+                </div>
+                <button id="btnCloseHelp"
+                    class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.15] text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 text-sm text-[#1D1D1F] dark:text-[#F5F5F7]">
+                <!-- Code Blocks -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-[#0071E3] flex items-center gap-1.5 text-sm">
+                        <span>💻</span> الأكواد البرمجية (Code Blocks)
+                    </h4>
+                    <p class="text-xs text-[#86868B]">اكتب الأكواد بين 3 علامات تنصيص مائلة للحصول على نافذة برمجية بنمط
+                        macOS مع زر نسخ مباشر:</p>
+                    <div class="bg-black/[0.04] dark:bg-white/[0.05] p-3 rounded-2xl font-code text-xs text-left"
+                        dir="ltr">
+                        ```bash<br>
+                        git add .<br>
+                        git commit -m "update files"<br>
+                        git push<br>
+                        ```
+                    </div>
+                </div>
+
+                <!-- Tables -->
+                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <h4 class="font-bold text-[#0071E3] flex items-center gap-1.5 text-sm">
+                        <span>📊</span> طريقة كتابة الجداول (Markdown Tables)
+                    </h4>
+                    <p class="text-xs text-[#86868B]">افصل بين الأعمدة برمز <code
+                            class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-[#0071E3]">|</code>
+                        واستخدم <code
+                            class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-[#0071E3]">---</code>
+                        في السطر الثاني:</p>
+                    <div class="bg-black/[0.04] dark:bg-white/[0.05] p-3 rounded-2xl font-code text-xs text-left"
+                        dir="ltr">
+                        | المادة | الدرجة | التقدير |<br>
+                        | :--- | :---: | ---: |<br>
+                        | رياضيات | 95 | ممتاز |<br>
+                        | فيزياء | $x = 10$ | جيد جداً |
+                    </div>
+                </div>
+
+                <!-- Math Formulas -->
+                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <h4 class="font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 text-sm">
+                        <span>📐</span> الرموز والمعادلات الرياضية (KaTeX / LaTeX)
+                    </h4>
+                    <p class="text-xs text-[#86868B]">اكتب المعادلة بين <code
+                            class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1.5 py-0.5 rounded text-purple-600 dark:text-purple-400">$ ... $</code>
+                        للمعادلة المضمنة، أو <code
+                            class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1.5 py-0.5 rounded text-purple-600 dark:text-purple-400">$$ ... $$</code>
+                        لعرضها في سطر مستقل:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-3 rounded-2xl">
+                            <span class="block font-semibold mb-1 text-[#86868B]">كسر اعتيادي:</span>
+                            <code class="font-code text-purple-600 dark:text-purple-400" dir="ltr">$\frac{a}{b}$</code>
+                        </div>
+                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-3 rounded-2xl">
+                            <span class="block font-semibold mb-1 text-[#86868B]">جذر تربيعي وأس:</span>
+                            <code class="font-code text-purple-600 dark:text-purple-400"
+                                dir="ltr">$\sqrt{x^2 + y^2}$</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Formatting -->
+                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <h4 class="font-bold text-[#FF9500] flex items-center gap-1.5 text-sm">
+                        <span>✍️</span> تنسيقات النصوص والعناوين
+                    </h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div
+                            class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
+                            <span>عناوين رئيسية</span>
+                            <code class="font-code text-[#FF9500]"># أو ## أو ###</code>
+                        </div>
+                        <div
+                            class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
+                            <span>خط عريض</span>
+                            <code class="font-code text-[#FF9500]">**نص عريض**</code>
+                        </div>
+                        <div
+                            class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
+                            <span>تحديد وتظليل</span>
+                            <code class="font-code text-[#FF9500]">==نص مميز==</code>
+                        </div>
+                        <div
+                            class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
+                            <span>فاصل أفقي</span>
+                            <code class="font-code text-[#FF9500]">---</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="p-4 border-t border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] flex justify-end">
+                <button id="btnCloseHelpFooter"
+                    class="px-5 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold transition active:scale-95 shadow-[0_2px_8px_rgba(0,113,227,0.3)]">
+                    فهمت، إغلاق
+                </button>
+            </div>
+
+        </div>
+    </div>
 
     <!-- App Logic -->
     <script>
-        // Constants for Unicode markers
-        const LRM = '\u200E'; // Left-to-Right Mark
-        const RLM = '\u200F'; // Right-to-Left Mark
-        
+        const LRM = '\u200E';
+        const RLM = '\u200F';
+
         // DOM Elements
         const themeToggle = document.getElementById('themeToggle');
         const optAutoAlign = document.getElementById('optAutoAlign');
         const optFixPunctuation = document.getElementById('optFixPunctuation');
         const optRichFormat = document.getElementById('optRichFormat');
         const optStripLineNumbers = document.getElementById('optStripLineNumbers');
-        
+
         const btnDirAuto = document.getElementById('btnDirAuto');
         const btnDirRtl = document.getElementById('btnDirRtl');
         const btnDirLtr = document.getElementById('btnDirLtr');
-        
+
         const btnClear = document.getElementById('btnClear');
         const btnPaste = document.getElementById('btnPaste');
         const btnCopy = document.getElementById('btnCopy');
-        
+
         const inputText = document.getElementById('inputText');
         const outputPreview = document.getElementById('outputPreview');
         const statsLabel = document.getElementById('statsLabel');
-        
-        let forceDirection = 'auto'; // 'auto', 'rtl', 'ltr'
 
-        // Theme Toggle Logic
+        // Modals
+        const helpModal = document.getElementById('helpModal');
+        const btnOpenHelp = document.getElementById('btnOpenHelp');
+        const btnCloseHelp = document.getElementById('btnCloseHelp');
+        const btnCloseHelpFooter = document.getElementById('btnCloseHelpFooter');
+
+        const settingsModal = document.getElementById('settingsModal');
+        const btnOpenSettings = document.getElementById('btnOpenSettings');
+        const btnCloseSettings = document.getElementById('btnCloseSettings');
+        const btnCloseSettingsFooter = document.getElementById('btnCloseSettingsFooter');
+
+        // Quick Insert Elements
+        const btnInsertTable = document.getElementById('btnInsertTable');
+        const btnInsertMath = document.getElementById('btnInsertMath');
+        const btnToggleSymbols = document.getElementById('btnToggleSymbols');
+        const symbolsPalette = document.getElementById('symbolsPalette');
+        const btnCloseSymbols = document.getElementById('btnCloseSymbols');
+        const arrowSymbols = document.getElementById('arrowSymbols');
+        const symBtns = document.querySelectorAll('.sym-btn');
+
+        let forceDirection = 'auto';
+
+        // Theme Toggle
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
         });
 
-        // Force direction buttons styling handler
+        // Symbols Palette Toggle
+        btnToggleSymbols.addEventListener('click', () => {
+            const isHidden = symbolsPalette.classList.contains('hidden');
+            if (isHidden) {
+                symbolsPalette.classList.remove('hidden');
+                arrowSymbols.classList.add('rotate-180');
+            } else {
+                symbolsPalette.classList.add('hidden');
+                arrowSymbols.classList.remove('rotate-180');
+            }
+        });
+
+        btnCloseSymbols.addEventListener('click', () => {
+            symbolsPalette.classList.add('hidden');
+            arrowSymbols.classList.remove('rotate-180');
+        });
+
+        // Settings Modal
+        btnOpenSettings.addEventListener('click', () => {
+            settingsModal.classList.remove('hidden');
+            settingsModal.classList.add('flex');
+        });
+
+        const closeSettings = () => {
+            settingsModal.classList.add('hidden');
+            settingsModal.classList.remove('flex');
+        };
+
+        btnCloseSettings.addEventListener('click', closeSettings);
+        btnCloseSettingsFooter.addEventListener('click', closeSettings);
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) closeSettings();
+        });
+
+        // Help Modal
+        btnOpenHelp.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+            helpModal.classList.add('flex');
+        });
+
+        const closeHelp = () => {
+            helpModal.classList.add('hidden');
+            helpModal.classList.remove('flex');
+        };
+
+        btnCloseHelp.addEventListener('click', closeHelp);
+        btnCloseHelpFooter.addEventListener('click', closeHelp);
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) closeHelp();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeHelp();
+                closeSettings();
+                symbolsPalette.classList.add('hidden');
+                arrowSymbols.classList.remove('rotate-180');
+            }
+        });
+
+        // Insert text helper
+        function insertAtCursor(textToInsert) {
+            const start = inputText.selectionStart;
+            const end = inputText.selectionEnd;
+            const val = inputText.value;
+            inputText.value = val.substring(0, start) + textToInsert + val.substring(end);
+            inputText.selectionStart = inputText.selectionEnd = start + textToInsert.length;
+            inputText.focus();
+            processText();
+        }
+
+        btnInsertTable.addEventListener('click', () => {
+            const tableTemplate = `\n| المادة | الدرجة | المعادلة |\n| :--- | :---: | :---: |\n| فيزياء | 98 | $E = mc^2$ |\n| رياضيات | 95 | $\\sqrt{x^2 + y^2}$ |\n`;
+            insertAtCursor(tableTemplate);
+        });
+
+        btnInsertMath.addEventListener('click', () => {
+            insertAtCursor('$$\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$');
+        });
+
+        symBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                insertAtCursor(btn.getAttribute('data-sym'));
+            });
+        });
+
+        window.insertExampleText = function () {
+            inputText.value = `### 🧠 الفكرة الأساسية (كيف يفكر Git؟)
+لكي ترفع أي تعديل على GitHub، تمر العملية بـ **3 مراحل رئيسية**:
+
+---
+
+#### 1️⃣ التحقق من حالة الملفات:
+\`\`\`bash
+git status
+\`\`\`
+
+#### 2️⃣ تجهيز الملفات (وضعها في صندوق الـ Staging):
+\`\`\`bash
+git add index.html
+\`\`\`
+*(أو يمكنك كتابة \`git add .\` لإضافة كل الملفات دفعة واحدة).*
+
+#### 3️⃣ جدول مقارنة وتنسيقات:
+| الأمر | الوظيفة | الأهمية |
+| :--- | :---: | ---: |
+| git status | فحص الملفات | عالي جداً |
+| git add . | تجهيز الكل | أساسي |
+| git push | رفع للتخزين السحابي | النهائي |
+
+وهنا معادلة رياضية توضيحية:
+$$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
+            processText();
+        };
+
+        // Apple Segmented Control for Force direction
         function setForceDirection(mode) {
             forceDirection = mode;
             [btnDirAuto, btnDirRtl, btnDirLtr].forEach(btn => {
-                btn.classList.remove('bg-blue-50', 'dark:bg-blue-950/40', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-900');
-                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-800');
+                btn.className = "py-1 px-3 text-xs font-medium rounded-lg transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white";
             });
-            
+
             let activeBtn;
             if (mode === 'auto') activeBtn = btnDirAuto;
             else if (mode === 'rtl') activeBtn = btnDirRtl;
             else if (mode === 'ltr') activeBtn = btnDirLtr;
-            
-            activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'border-slate-200', 'dark:border-slate-800');
-            activeBtn.classList.add('bg-blue-50', 'dark:bg-blue-950/40', 'text-blue-600', 'dark:text-blue-400', 'border-blue-200', 'dark:border-blue-900');
-            
+
+            activeBtn.className = "py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-[#0071E3] dark:text-blue-400 shadow-sm";
+
             processText();
         }
 
@@ -262,7 +814,6 @@
         btnDirRtl.addEventListener('click', () => setForceDirection('rtl'));
         btnDirLtr.addEventListener('click', () => setForceDirection('ltr'));
 
-        // Clear and Paste Buttons
         btnClear.addEventListener('click', () => {
             inputText.value = '';
             processText();
@@ -274,139 +825,316 @@
                 inputText.value = text;
                 processText();
             } catch (err) {
-                alert('Could not read clipboard. Please paste manually (Ctrl+V).');
+                alert('يرجى لصق النص يدوياً باستخدام Ctrl+V');
             }
         });
 
-        // Copy Button
         btnCopy.addEventListener('click', () => {
             const rawOutput = getProcessedTextRaw();
             navigator.clipboard.writeText(rawOutput).then(() => {
-                const originalText = btnCopy.innerHTML;
+                const originalContent = btnCopy.innerHTML;
                 btnCopy.innerHTML = `
-                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    <span>تم النسخ!</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>تم النسخ بنجاح!</span>
                 `;
-                btnCopy.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-                btnCopy.classList.add('bg-slate-600');
-                
+                btnCopy.classList.remove('bg-[#34C759]', 'hover:bg-[#2EB84F]');
+                btnCopy.classList.add('bg-[#0071E3]');
+
                 setTimeout(() => {
-                    btnCopy.innerHTML = originalText;
-                    btnCopy.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
-                    btnCopy.classList.remove('bg-slate-600');
+                    btnCopy.innerHTML = originalContent;
+                    btnCopy.classList.add('bg-[#34C759]', 'hover:bg-[#2EB84F]');
+                    btnCopy.classList.remove('bg-[#0071E3]');
                 }, 2000);
             }).catch(err => {
-                alert('Failed to copy text.');
+                alert('تعذر نسخ النص.');
             });
         });
 
-        // Check if text has Arabic characters
         function hasArabic(text) {
             const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
             return arabicPattern.test(text);
         }
 
-        // Parse markdown text markup to safe HTML
-        function parseMarkdownMarkup(text) {
-            // Escape HTML entities to prevent XSS
-            let html = text
+        function renderMathInString(str) {
+            if (typeof katex === 'undefined') return str;
+
+            str = str.replace(/\$\$([\s\S]+?)\$\$/g, (match, expr) => {
+                try {
+                    const rendered = katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false });
+                    return `<div class="my-3 py-2 px-3 bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.05] dark:border-white/[0.07] rounded-2xl text-center overflow-x-auto shadow-inner" dir="ltr">${rendered}</div>`;
+                } catch (e) {
+                    return match;
+                }
+            });
+
+            str = str.replace(/\$([^\$\n]+?)\$/g, (match, expr) => {
+                try {
+                    const rendered = katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false });
+                    return `<span class="inline-block px-1 py-0.5" dir="ltr">${rendered}</span>`;
+                } catch (e) {
+                    return match;
+                }
+            });
+
+            return str;
+        }
+
+        function escapeHtml(str) {
+            return str
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-            
-            if (!optRichFormat.checked) return html;
+        }
 
-            // Headings (# Heading, ## Heading, ### Heading)
-            html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl font-bold border-b border-slate-200 dark:border-slate-800 pb-1.5 mb-3 mt-1">$1</h1>');
-            html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-xl font-bold border-b border-slate-100 dark:border-slate-900/50 pb-1 mb-2 mt-3">$1</h2>');
-            html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg font-bold mb-1.5 mt-2">$1</h3>');
-            
-            // Bold (**text** or __text__)
-            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
-            html = html.replace(/__(.*?)__/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
-            
-            // Highlights (==text==)
-            html = html.replace(/==(.*?)==/g, '<mark class="bg-yellow-200 dark:bg-yellow-950/80 text-yellow-900 dark:text-yellow-100 px-1 py-0.5 rounded font-semibold">$1</mark>');
-            
-            // Inline Code (`code`)
-            html = html.replace(/`(.*?)`/g, '<code class="code-font text-sm bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-400">$1</code>');
-            
+        function parseInlineMarkdown(text) {
+            let processed = renderMathInString(text);
+
+            if (!optRichFormat.checked) {
+                return escapeHtml(processed);
+            }
+
+            processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[#0071E3] dark:text-[#2997FF]">$1</strong>');
+            processed = processed.replace(/__(.*?)__/g, '<strong class="font-bold text-[#0071E3] dark:text-[#2997FF]">$1</strong>');
+
+            processed = processed.replace(/\*([^\*\n]+?)\*/g, '<em class="italic text-[#86868B]">$1</em>');
+            processed = processed.replace(/_([^_\n]+?)_/g, '<em class="italic text-[#86868B]">$1</em>');
+
+            processed = processed.replace(/==(.*?)==/g, '<mark class="bg-[#FFD60A]/30 text-[#876500] dark:text-[#FFD60A] px-1.5 py-0.5 rounded-lg font-semibold">$1</mark>');
+
+            processed = processed.replace(/`([^`]+?)`/g, '<code class="font-code text-xs bg-black/[0.05] dark:bg-white/[0.08] px-1.5 py-0.5 rounded-lg text-[#FF2D55] dark:text-[#FF375F] font-semibold" dir="ltr">$1</code>');
+
+            return processed;
+        }
+
+        function parseTableBlock(tableLines) {
+            if (tableLines.length < 2) return null;
+
+            const headerLine = tableLines[0];
+            const separatorLine = tableLines[1];
+
+            const isSep = /^[\s|:-]+$/.test(separatorLine) && separatorLine.includes('-');
+            if (!isSep) return null;
+
+            const parseCells = (line) => {
+                let trimmed = line.trim();
+                if (trimmed.startsWith('|')) trimmed = trimmed.substring(1);
+                if (trimmed.endsWith('|')) trimmed = trimmed.substring(0, trimmed.length - 1);
+                return trimmed.split('|').map(c => c.trim());
+            };
+
+            const headers = parseCells(headerLine);
+            const aligns = parseCells(separatorLine).map(col => {
+                const left = col.startsWith(':');
+                const right = col.endsWith(':');
+                if (left && right) return 'center';
+                if (right) return 'right';
+                if (left) return 'left';
+                return 'auto';
+            });
+
+            const rows = tableLines.slice(2).map(parseCells);
+
+            let html = '<div class="overflow-x-auto my-4 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-sm">';
+            html += '<table class="w-full text-sm text-[#1D1D1F] dark:text-[#F5F5F7] border-collapse">';
+
+            html += '<thead class="bg-black/[0.03] dark:bg-white/[0.04] text-[#1D1D1F] dark:text-white font-semibold border-b border-black/[0.06] dark:border-white/[0.08]">';
+            html += '<tr>';
+            headers.forEach((h, i) => {
+                const align = aligns[i] || 'auto';
+                const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : align === 'left' ? 'text-left' : (hasArabic(h) ? 'text-right' : 'text-left');
+                html += `<th class="px-4 py-3 ${alignClass} border-x border-black/[0.04] dark:border-white/[0.05]">${parseInlineMarkdown(h)}</th>`;
+            });
+            html += '</tr></thead>';
+
+            html += '<tbody class="divide-y divide-black/[0.04] dark:divide-white/[0.05] bg-transparent">';
+            rows.forEach((row) => {
+                html += `<tr class="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition">`;
+                headers.forEach((_, cIdx) => {
+                    const cell = row[cIdx] !== undefined ? row[cIdx] : '';
+                    const align = aligns[cIdx] || 'auto';
+                    const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : align === 'left' ? 'text-left' : (hasArabic(cell) ? 'text-right' : 'text-left');
+                    html += `<td class="px-4 py-2.5 ${alignClass} border-x border-black/[0.04] dark:border-white/[0.05]">${parseInlineMarkdown(cell)}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+
             return html;
         }
 
-        // Process Text function
+        window.copySnippet = function (encodedCode, btn) {
+            const code = decodeURIComponent(encodedCode);
+            navigator.clipboard.writeText(code).then(() => {
+                const original = btn.innerHTML;
+                btn.innerHTML = `<span class="text-[#34C759]">✓ تم النسخ</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                }, 1800);
+            });
+        };
+
         function processText() {
             const text = inputText.value;
-            
-            // Statistics
+
             const chars = text.length;
             const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
             statsLabel.textContent = `الأحرف: ${chars} | الكلمات: ${words}`;
-            
-            // HTML Live Preview Construction
+
             outputPreview.innerHTML = '';
-            const lines = text.split('\n');
-            
-            lines.forEach((line) => {
-                let processedLine = line;
-                
-                // 1. Strip Line Numbers
+            const rawLines = text.split('\n');
+
+            let i = 0;
+            while (i < rawLines.length) {
+                let currentLine = rawLines[i];
+
                 if (optStripLineNumbers.checked) {
-                    processedLine = processedLine.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
+                    currentLine = currentLine.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
                 }
-                
-                // Determine direction
+
+                const cleanTrimmed = currentLine.replace(/^[\u200E\u200F\s]+/, '').trim();
+
+                // 1. Multiline Code Blocks
+                if (optRichFormat.checked && cleanTrimmed.startsWith('```')) {
+                    const lang = cleanTrimmed.replace(/^```/, '').trim();
+                    const codeLines = [];
+                    i++;
+                    while (i < rawLines.length) {
+                        const l = rawLines[i];
+                        if (l.replace(/^[\u200E\u200F\s]+/, '').trim().startsWith('```')) {
+                            i++;
+                            break;
+                        }
+                        codeLines.push(l);
+                        i++;
+                    }
+
+                    const codeContent = codeLines.join('\n');
+                    const encodedCode = encodeURIComponent(codeContent);
+                    const escapedCode = escapeHtml(codeContent);
+
+                    const codeWrapper = document.createElement('div');
+                    codeWrapper.className = 'my-3.5 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-[#1E1E24] shadow-md text-left';
+                    codeWrapper.dir = 'ltr';
+                    codeWrapper.innerHTML = `
+                        <div class="bg-[#2A2A32] px-4 py-2 flex items-center justify-between text-xs text-slate-400 border-b border-white/[0.06]">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                                <span class="font-code text-slate-300 text-xs font-semibold mr-2 ml-1">${lang || 'Terminal'}</span>
+                            </div>
+                            <button class="hover:text-white transition flex items-center gap-1 text-[11px] bg-white/[0.1] hover:bg-white/[0.18] px-2.5 py-1 rounded-lg text-slate-200 font-code active:scale-95" onclick="copySnippet('${encodedCode}', this)">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                <span>نسخ الكود</span>
+                            </button>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm font-code text-[#34D399] overflow-x-auto leading-relaxed"><code>${escapedCode}</code></pre>
+                    `;
+                    outputPreview.appendChild(codeWrapper);
+                    continue;
+                }
+
+                // 2. Horizontal Rule
+                if (optRichFormat.checked && /^([\u200E\u200F\s]*)(---|___|\*\*\*)\s*$/.test(currentLine)) {
+                    const hr = document.createElement('hr');
+                    hr.className = 'my-4 border-t border-black/[0.08] dark:border-white/[0.08] rounded-full';
+                    outputPreview.appendChild(hr);
+                    i++;
+                    continue;
+                }
+
+                // 3. Headings
+                const headingMatch = currentLine.match(/^([\u200E\u200F\s]*)(#{1,6})\s+(.+)$/);
+                if (optRichFormat.checked && headingMatch) {
+                    const level = headingMatch[2].length;
+                    const headingContent = headingMatch[3];
+                    const dir = (forceDirection === 'rtl' || (forceDirection === 'auto' && hasArabic(headingContent))) ? 'rtl' : 'ltr';
+
+                    const headingEl = document.createElement(`h${level}`);
+                    const styles = {
+                        1: 'text-2xl font-bold border-b border-black/[0.06] dark:border-white/[0.08] pb-2 mb-3 mt-4 text-[#1D1D1F] dark:text-white',
+                        2: 'text-xl font-bold border-b border-black/[0.04] dark:border-white/[0.06] pb-1.5 mb-2 mt-3 text-[#1D1D1F] dark:text-white',
+                        3: 'text-lg font-bold mb-1.5 mt-2.5 text-[#0071E3] dark:text-[#2997FF]',
+                        4: 'text-base font-bold mb-1 mt-2 text-[#5856D6] dark:text-[#5E5CE6]',
+                        5: 'text-sm font-bold mb-1 mt-1.5 text-[#1D1D1F] dark:text-[#F5F5F7]',
+                        6: 'text-xs font-bold mb-1 mt-1 text-[#86868B]'
+                    };
+                    headingEl.className = `${styles[level] || styles[3]} ${dir === 'rtl' ? 'text-right' : 'text-left'}`;
+                    headingEl.dir = dir;
+                    headingEl.innerHTML = parseInlineMarkdown(headingContent);
+                    outputPreview.appendChild(headingEl);
+                    i++;
+                    continue;
+                }
+
+                // 4. Markdown Tables
+                const isTableLine = (l) => l.trim().startsWith('|') && l.trim().endsWith('|') && l.includes('|');
+                if (optRichFormat.checked && isTableLine(currentLine) && i + 1 < rawLines.length && isTableLine(rawLines[i + 1])) {
+                    const tableBlockLines = [];
+                    while (i < rawLines.length && isTableLine(rawLines[i])) {
+                        let l = rawLines[i];
+                        if (optStripLineNumbers.checked) l = l.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
+                        tableBlockLines.push(l);
+                        i++;
+                    }
+
+                    const tableHtml = parseTableBlock(tableBlockLines);
+                    if (tableHtml) {
+                        const tableWrapper = document.createElement('div');
+                        tableWrapper.innerHTML = tableHtml;
+                        outputPreview.appendChild(tableWrapper);
+                        continue;
+                    } else {
+                        i -= tableBlockLines.length;
+                        currentLine = rawLines[i];
+                    }
+                }
+
+                // 5. Normal Line Processing
                 let dir = 'ltr';
                 if (forceDirection === 'rtl') {
                     dir = 'rtl';
                 } else if (forceDirection === 'ltr') {
                     dir = 'ltr';
                 } else {
-                    // Auto-align logic based on content
                     if (optAutoAlign.checked) {
-                        dir = hasArabic(processedLine) ? 'rtl' : 'ltr';
+                        dir = hasArabic(currentLine) ? 'rtl' : 'ltr';
                     }
                 }
-                
-                // 2. Fix Bidi Punctuation / Brackets logic
-                if (optFixPunctuation.checked && hasArabic(processedLine)) {
-                    // Add RLM after punctuation/brackets to bind them to the RTL context
-                    processedLine = processedLine.replace(/([.!?()\[\]{}""'':;,-]+)/g, `$1${RLM}`);
-                    
-                    // Prefix the whole line with RLM to ensure correct start
-                    processedLine = RLM + processedLine;
+
+                if (optFixPunctuation.checked && hasArabic(currentLine)) {
+                    if (!currentLine.includes('$')) {
+                        currentLine = currentLine.replace(/([.!?()\[\]{}""'':;,-]+)/g, `$1${RLM}`);
+                        currentLine = RLM + currentLine;
+                    }
                 }
-                
-                // Parse formatting (Markdown)
-                const formattedHtml = parseMarkdownMarkup(processedLine);
-                
-                // Create preview element
+
+                const formattedHtml = parseInlineMarkdown(currentLine);
+
                 const div = document.createElement('div');
-                
-                // Dynamic border and background indicators based on direction for visual clarity
-                const directionBorder = dir === 'rtl' 
-                    ? 'border-r-2 border-blue-500/40 pr-3 text-right' 
-                    : 'border-l-2 border-emerald-500/40 pl-3 text-left';
-                
-                div.className = `py-1 min-h-[1.75rem] transition-all hover:bg-slate-100 dark:hover:bg-slate-900/60 rounded px-2 -mx-2 ${directionBorder}`;
+                const directionBorder = dir === 'rtl'
+                    ? 'border-r-2 border-[#0071E3]/40 pr-3 text-right'
+                    : 'border-l-2 border-[#34C759]/40 pl-3 text-left';
+
+                div.className = `py-1 min-h-[1.75rem] transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02] rounded-xl px-2 -mx-2 ${directionBorder}`;
                 div.style.direction = dir;
-                div.innerHTML = formattedHtml;
-                
+                div.innerHTML = formattedHtml === '' ? '&nbsp;' : formattedHtml;
+
                 outputPreview.appendChild(div);
-            });
+                i++;
+            }
         }
 
-        // Get raw text representation of processed text for copy function
         function getProcessedTextRaw() {
             const lines = inputText.value.split('\n');
             const processedLines = lines.map(line => {
                 let processedLine = line;
-                
+
                 if (optStripLineNumbers.checked) {
                     processedLine = processedLine.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
                 }
-                
-                if (optFixPunctuation.checked && hasArabic(processedLine)) {
+
+                if (optFixPunctuation.checked && hasArabic(processedLine) && !processedLine.includes('$') && !processedLine.startsWith('#') && !processedLine.startsWith('```')) {
                     processedLine = processedLine.replace(/([.!?()\[\]{}""'':;,-]+)/g, `$1${RLM}`);
                     processedLine = RLM + processedLine;
                 }
@@ -415,15 +1143,14 @@
             return processedLines.join('\n');
         }
 
-        // Event Listeners for real-time updates
         inputText.addEventListener('input', processText);
         optAutoAlign.addEventListener('change', processText);
         optFixPunctuation.addEventListener('change', processText);
         optRichFormat.addEventListener('change', processText);
         optStripLineNumbers.addEventListener('change', processText);
 
-        // Initial Run
         processText();
     </script>
 </body>
+
 </html>
