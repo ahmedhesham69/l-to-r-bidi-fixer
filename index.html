@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl" class="dark theme-default">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُنسق ومُصلح النصوص والرموز الرياضية (Apple Focus Edition)</title>
+    <title>مُنسق ومُصلح النصوص والرموز الرياضية (Nature & Apple Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Apple SF Pro / Cairo Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,24 +45,105 @@
         }
         
         ::selection {
-            background-color: rgba(0, 113, 227, 0.25);
+            background-color: var(--selection-bg, rgba(0, 113, 227, 0.25));
             color: inherit;
         }
 
-        /* Apple frosted glass cards */
-        .apple-card {
-            background-color: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Base Variables (Default Apple Theme) */
+        :root {
+            --app-bg: #F5F5F7;
+            --app-card: rgba(255, 255, 255, 0.88);
+            --app-border: rgba(0, 0, 0, 0.06);
+            --app-text: #1D1D1F;
+            --app-subtext: #86868B;
+            --app-accent: #0071E3;
+            --selection-bg: rgba(0, 113, 227, 0.25);
         }
 
-        .dark .apple-card {
-            background-color: rgba(28, 28, 30, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.35);
+        .dark:root {
+            --app-bg: #000000;
+            --app-card: rgba(28, 28, 30, 0.85);
+            --app-border: rgba(255, 255, 255, 0.08);
+            --app-text: #F5F5F7;
+            --app-subtext: #A1A1A6;
+            --app-accent: #0071E3;
+            --selection-bg: rgba(0, 113, 227, 0.35);
+        }
+
+        /* 1. Sea & Island Theme (البحر والجزر) */
+        html.theme-ocean {
+            --app-bg: #EEF6F9;
+            --app-card: rgba(255, 255, 255, 0.9);
+            --app-border: rgba(14, 116, 144, 0.12);
+            --app-text: #0F172A;
+            --app-subtext: #64748B;
+            --app-accent: #0284C7;
+            --selection-bg: rgba(2, 132, 199, 0.25);
+        }
+        html.dark.theme-ocean {
+            --app-bg: #071118;
+            --app-card: rgba(13, 27, 39, 0.88);
+            --app-border: rgba(56, 189, 248, 0.12);
+            --app-text: #E0F2FE;
+            --app-subtext: #7DD3FC;
+            --app-accent: #38BDF8;
+            --selection-bg: rgba(56, 189, 248, 0.3);
+        }
+
+        /* 2. Warm Earth & Brown Theme (الألوان الترابية والبني الدافئ) */
+        html.theme-earth {
+            --app-bg: #F8F4EE;
+            --app-card: rgba(255, 255, 255, 0.92);
+            --app-border: rgba(120, 80, 50, 0.1);
+            --app-text: #2D241E;
+            --app-subtext: #786C64;
+            --app-accent: #8D5B4C;
+            --selection-bg: rgba(141, 91, 76, 0.25);
+        }
+        html.dark.theme-earth {
+            --app-bg: #15110E;
+            --app-card: rgba(36, 28, 23, 0.88);
+            --app-border: rgba(212, 163, 115, 0.12);
+            --app-text: #F7EBE1;
+            --app-subtext: #BCAAA4;
+            --app-accent: #D4A373;
+            --selection-bg: rgba(212, 163, 115, 0.3);
+        }
+
+        /* 3. Forest & Sage Nature Theme (الطبيعة والغابات الهادئة) */
+        html.theme-forest {
+            --app-bg: #F1F6F2;
+            --app-card: rgba(255, 255, 255, 0.92);
+            --app-border: rgba(46, 125, 50, 0.1);
+            --app-text: #1B2E1E;
+            --app-subtext: #5F7A62;
+            --app-accent: #2E7D32;
+            --selection-bg: rgba(46, 125, 50, 0.25);
+        }
+        html.dark.theme-forest {
+            --app-bg: #0C1610;
+            --app-card: rgba(17, 33, 22, 0.88);
+            --app-border: rgba(129, 199, 132, 0.12);
+            --app-text: #E8F5E9;
+            --app-subtext: #A5D6A7;
+            --app-accent: #81C784;
+            --selection-bg: rgba(129, 199, 132, 0.3);
+        }
+
+        body {
+            background-color: var(--app-bg);
+            color: var(--app-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Apple frosted glass cards with CSS variables */
+        .apple-card {
+            background-color: var(--app-card);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--app-border);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* Native iOS Switch */
@@ -107,7 +188,7 @@
         }
 
         .apple-switch input:checked + .apple-slider {
-            background-color: #0071E3;
+            background-color: var(--app-accent);
         }
 
         .apple-switch input:checked + .apple-slider:before {
@@ -138,39 +219,67 @@
         }
     </style>
 </head>
-<body class="bg-[#F5F5F7] dark:bg-[#000000] text-[#1D1D1F] dark:text-[#F5F5F7] min-h-screen transition-colors duration-300">
+<body class="min-h-screen transition-colors duration-300">
 
     <!-- Apple Translucent Header -->
     <header class="border-b border-black/[0.06] dark:border-white/[0.08] bg-white/75 dark:bg-[#161617]/75 backdrop-blur-2xl sticky top-0 z-30 transition-colors">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0071E3] to-[#1D4ED8] shadow-[0_4px_12px_rgba(0,113,227,0.3)] flex items-center justify-center text-white">
+                <div id="appLogoBadge" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0071E3] to-[#1D4ED8] shadow-[0_4px_12px_rgba(0,113,227,0.3)] flex items-center justify-center text-white transition-all duration-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-semibold tracking-tight text-[#1D1D1F] dark:text-white flex items-center gap-2">
                         مُنسق ومُصلح النصوص
-                        <span class="text-[10px] bg-black/[0.04] dark:bg-white/[0.08] text-[#86868B] dark:text-[#A1A1A6] font-medium px-2 py-0.5 rounded-full">Focus Mode</span>
+                        <span id="themeBadge" class="text-[10px] bg-black/[0.04] dark:bg-white/[0.08] text-[#86868B] dark:text-[#A1A1A6] font-medium px-2 py-0.5 rounded-full">Nature Edition</span>
                     </h1>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
+                <!-- Nature Theme Switcher Dropdown Button -->
+                <div class="relative">
+                    <button id="btnThemeMenu" class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+                        <span id="activeThemeIcon">🌊</span>
+                        <span class="hidden sm:inline" id="activeThemeName">نسيم البحر</span>
+                        <svg class="w-3 h-3 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <!-- Theme Options Dropdown Popover -->
+                    <div id="themeDropdown" class="hidden absolute left-0 mt-2 w-48 apple-card rounded-2xl p-2 shadow-2xl z-40 space-y-1 text-xs animate-in fade-in zoom-in-95 duration-150">
+                        <button class="theme-select-btn w-full px-3 py-2 rounded-xl text-right flex items-center justify-between hover:bg-black/[0.04] dark:hover:bg-white/[0.08] transition" data-theme="ocean">
+                            <span class="flex items-center gap-2"><span>🌊</span>نسيم البحر والجزر</span>
+                            <span class="w-3 h-3 rounded-full bg-sky-500"></span>
+                        </button>
+                        <button class="theme-select-btn w-full px-3 py-2 rounded-xl text-right flex items-center justify-between hover:bg-black/[0.04] dark:hover:bg-white/[0.08] transition" data-theme="earth">
+                            <span class="flex items-center gap-2"><span>☕</span>ألوان ترابية وبني دافئ</span>
+                            <span class="w-3 h-3 rounded-full bg-[#8D5B4C]"></span>
+                        </button>
+                        <button class="theme-select-btn w-full px-3 py-2 rounded-xl text-right flex items-center justify-between hover:bg-black/[0.04] dark:hover:bg-white/[0.08] transition" data-theme="forest">
+                            <span class="flex items-center gap-2"><span>🌿</span>طبيعة وغابات هادئة</span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+                        </button>
+                        <button class="theme-select-btn w-full px-3 py-2 rounded-xl text-right flex items-center justify-between hover:bg-black/[0.04] dark:hover:bg-white/[0.08] transition" data-theme="default">
+                            <span class="flex items-center gap-2"><span></span>أبل الكلاسيكي (Slate)</span>
+                            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Options / Settings Modal Trigger -->
-                <button id="btnOpenSettings" class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
-                    <svg class="w-4 h-4 text-[#0071E3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    <span>خيارات التنسيق</span>
+                <button id="btnOpenSettings" class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span class="hidden sm:inline">الخيارات</span>
                 </button>
 
                 <!-- Help / Guide Button -->
-                <button id="btnOpenHelp" class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+                <button id="btnOpenHelp" class="px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
                     <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <span>الدليل</span>
+                    <span class="hidden sm:inline">الدليل</span>
                 </button>
 
                 <!-- Theme Toggle Button -->
-                <button id="themeToggle" class="w-8 h-8 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-[#1D1D1F] dark:text-white flex items-center justify-center transition active:scale-90" aria-label="Toggle theme">
+                <button id="themeToggle" class="w-8 h-8 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] flex items-center justify-center transition active:scale-90" aria-label="Toggle theme">
                     <svg id="sunIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m2.828-9.9a5 5 0 11-7.07 7.07 5 5 0 017.07-7.07z"/></svg>
                     <svg id="moonIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                 </button>
@@ -181,13 +290,13 @@
     <!-- Main Container (Centered Focus on Text) -->
     <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-5">
         
-        <!-- Apple Focus Toolbar (Quick tools & Direction integrated at the top) -->
+        <!-- Apple Focus Toolbar (Quick tools & Nature Colors Palette) -->
         <div class="apple-card px-5 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-sm">
             
             <!-- Quick Insert Buttons -->
             <div class="flex items-center flex-wrap gap-2">
                 <span class="text-xs font-semibold text-[#86868B] ml-1">إدراج سريع:</span>
-                <button id="btnInsertTable" class="py-1.5 px-3 rounded-xl bg-[#0071E3]/10 hover:bg-[#0071E3]/20 text-[#0071E3] text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
+                <button id="btnInsertTable" class="py-1.5 px-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <span>جدول</span>
                 </button>
@@ -195,9 +304,16 @@
                     <span class="font-serif italic font-bold">∑</span>
                     <span>معادلة</span>
                 </button>
+
+                <!-- New: Nature & Earth Highlights Color Palette Button -->
+                <button id="btnToggleColors" class="py-1.5 px-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-semibold transition active:scale-95 flex items-center gap-1.5">
+                    <span>🎨 ألوان الطبيعة والتظليل</span>
+                    <svg id="arrowColors" class="w-3 h-3 text-amber-600/70 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+
                 <!-- Quick Symbols Palette Toggle -->
                 <button id="btnToggleSymbols" class="py-1.5 px-3 rounded-xl bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold text-slate-700 dark:text-slate-200 transition active:scale-95 flex items-center gap-1">
-                    <span>π الرموز الرياضية</span>
+                    <span>π الرموز</span>
                     <svg id="arrowSymbols" class="w-3 h-3 text-[#86868B] transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
             </div>
@@ -206,32 +322,72 @@
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-[#86868B]">الاتجاه:</span>
                 <div class="bg-black/[0.05] dark:bg-white/[0.08] p-1 rounded-xl flex items-center gap-0.5 shadow-inner">
-                    <button id="btnDirAuto" class="py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-[#0071E3] dark:text-blue-400 shadow-sm">تلقائي</button>
+                    <button id="btnDirAuto" class="py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-blue-600 dark:text-blue-400 shadow-sm">تلقائي</button>
                     <button id="btnDirRtl" class="py-1 px-3 text-xs font-medium rounded-lg transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white">RTL</button>
                     <button id="btnDirLtr" class="py-1 px-3 text-xs font-medium rounded-lg transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white">LTR</button>
                 </div>
             </div>
         </div>
 
-        <!-- Collapsible Symbols Palette -->
+        <!-- Collapsible Nature & Earth Highlights Palette (Color Chips) -->
+        <div id="colorsPalette" class="hidden apple-card p-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div class="flex items-center justify-between mb-2.5">
+                <span class="text-xs font-semibold text-[#86868B]">اختر لون التظليل (قم بتحديد نص أولاً أو انقر للإدراج):</span>
+                <button id="btnCloseColors" class="text-xs text-[#86868B] hover:text-slate-900 dark:hover:text-white">إغلاق</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-xs">
+                <!-- 1. Sea Blue -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-sky-400/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-800 dark:text-sky-200 font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="بحر">
+                    <span>🌊</span>
+                    <span>أزرق بحري</span>
+                </button>
+                <!-- 2. Tropical Island Teal -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-teal-400/30 bg-teal-500/10 hover:bg-teal-500/20 text-teal-800 dark:text-teal-200 font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="جزيرة">
+                    <span>🏝️</span>
+                    <span>فيروزي الجزر</span>
+                </button>
+                <!-- 3. Nature Sage Green -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-emerald-500/30 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-800 dark:text-emerald-200 font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="طبيعة">
+                    <span>🌿</span>
+                    <span>طبيعة وزيتوني</span>
+                </button>
+                <!-- 4. Warm Earth Brown / Coffee -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-[#8B5A2B]/30 bg-[#8B5A2B]/10 hover:bg-[#8B5A2B]/20 text-[#5C3A1E] dark:text-[#E6B89C] font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="بني">
+                    <span>☕</span>
+                    <span>بني وترابي</span>
+                </button>
+                <!-- 5. Warm Beach Sand -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-[#DDA15E]/30 bg-[#DDA15E]/15 hover:bg-[#DDA15E]/25 text-[#7F4F24] dark:text-[#F3DFBF] font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="رمل">
+                    <span>🏖️</span>
+                    <span>رمل الشاطئ</span>
+                </button>
+                <!-- 6. Honey Amber -->
+                <button class="color-chip-btn py-2 px-3 rounded-xl border border-amber-400/30 bg-amber-400/15 hover:bg-amber-400/25 text-amber-800 dark:text-amber-200 font-semibold transition active:scale-95 flex items-center justify-center gap-1.5" data-tag="">
+                    <span>☀️</span>
+                    <span>عسلي كلاسيكي</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Collapsible Math Symbols Palette -->
         <div id="symbolsPalette" class="hidden apple-card p-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-[#86868B]">انقر لإدراج أي رمز مباشرة في النص:</span>
                 <button id="btnCloseSymbols" class="text-xs text-[#86868B] hover:text-slate-900 dark:hover:text-white">إغلاق</button>
             </div>
             <div class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 text-center font-code">
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="√">√</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="π">π</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="±">±</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="≠">≠</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="≤">≤</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="≥">≥</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="∞">∞</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="∑">∑</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="∫">∫</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="θ">θ</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="²">²</button>
-                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-100 text-xs font-bold transition active:scale-90" data-sym="³">³</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="√">√</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="π">π</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="±">±</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="≠">≠</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="≤">≤</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="≥">≥</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="∞">∞</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="∑">∑</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="∫">∫</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="θ">θ</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="²">²</button>
+                <button class="sym-btn h-8 rounded-xl bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-xs font-bold transition active:scale-90" data-sym="³">³</button>
             </div>
         </div>
 
@@ -251,7 +407,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         مسح
                     </button>
-                    <button id="btnPaste" class="text-xs px-4 py-1.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white transition flex items-center gap-1 shadow-[0_2px_8px_rgba(0,113,227,0.3)] active:scale-95 font-medium">
+                    <button id="btnPaste" class="text-xs px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition flex items-center gap-1 shadow-sm active:scale-95 font-medium">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                         لصق
                     </button>
@@ -262,10 +418,10 @@
             <div class="p-6 space-y-6">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label for="inputText" class="block text-xs font-bold text-[#86868B] uppercase tracking-wider">النص الأصلي (اكتب أو الصق هنا)</label>
-                        <button type="button" class="text-[11px] text-[#0071E3] hover:underline cursor-pointer" onclick="insertExampleText()">تجربة نص نموذجي</button>
+                        <label for="inputText" class="block text-xs font-bold text-[#86868B] uppercase tracking-wider">النص الأصلي (يدعم تظليلات الطبيعة، الجداول، والمعادلات)</label>
+                        <button type="button" class="text-[11px] text-blue-500 hover:underline cursor-pointer" onclick="insertExampleText()">تجربة نص يحتوي على ألوان الطبيعة والبحر</button>
                     </div>
-                    <textarea id="inputText" class="w-full min-h-[200px] p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.03] focus:ring-2 focus:ring-[#0071E3]/30 focus:border-[#0071E3] focus:bg-white dark:focus:bg-[#1C1C1E] outline-none transition-all duration-200 text-sm md:text-base leading-relaxed text-[#1D1D1F] dark:text-white resize-y" placeholder="الصق النص هنا للبدء في تنسيقه وإصلاح اتجاهاته تلقائياً..."></textarea>
+                    <textarea id="inputText" class="w-full min-h-[200px] p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.03] focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white dark:focus:bg-[#1C1C1E] outline-none transition-all duration-200 text-sm md:text-base leading-relaxed resize-y" placeholder="الصق النص هنا... جرب تظليلات الطبيعة مثل ==بحر:نص بحري== أو ==طبيعة:نص أخضر== أو ==بني:نص ترابي دافئ== أو ==رمل:شاطئ ذهبي=="></textarea>
                 </div>
 
                 <!-- Sleek Divider -->
@@ -286,7 +442,7 @@
                         <!-- Actions & Copy Buttons Group -->
                         <div class="flex items-center flex-wrap gap-2">
                             <!-- WhatsApp / Plain Text Format Copy Button -->
-                            <button id="btnCopyWhatsApp" class="text-xs px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold transition-all duration-200 flex items-center gap-1.5 shadow-[0_4px_12px_rgba(37,211,102,0.3)] active:scale-95" title="نسخ النص مهيأ للمحادثات والواتساب بدون تشويه للجداول والمعادلات">
+                            <button id="btnCopyWhatsApp" class="text-xs px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold transition-all duration-200 flex items-center gap-1.5 shadow-[0_4px_12px_rgba(37,211,102,0.3)] active:scale-95" title="نسخ النص مهيأ للمحادثات والواتساب">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                                 </svg>
@@ -294,7 +450,7 @@
                             </button>
 
                             <!-- Standard Copy Button -->
-                            <button id="btnCopy" class="text-xs px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-semibold transition-all duration-200 flex items-center gap-1.5 shadow-[0_4px_12px_rgba(0,113,227,0.3)] active:scale-95">
+                            <button id="btnCopy" class="text-xs px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all duration-200 flex items-center gap-1.5 shadow-sm active:scale-95">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                                 <span>نسخ كامل (Copy)</span>
                             </button>
@@ -310,16 +466,16 @@
 
     <!-- Footer -->
     <footer class="mt-12 py-8 border-t border-black/[0.06] dark:border-white/[0.08] text-center text-xs text-[#86868B] transition-colors">
-        <p>مُنسق ومُصلح النصوص والرموز الرياضية &bull; Minimalist Apple Focus View.</p>
+        <p>مُنسق ومُصلح النصوص والرموز الرياضية &bull; ألوان متناسقة ومستوحاة من الطبيعة والبحار والأرض.</p>
     </footer>
 
-    <!-- Settings / Options Modal (Popup Sheet) -->
+    <!-- Settings / Options Modal -->
     <div id="settingsModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
         <div class="apple-card border border-black/[0.08] dark:border-white/[0.12] rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             
             <div class="p-5 border-b border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#0071E3] text-white flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <h3 class="text-sm font-semibold text-[#1D1D1F] dark:text-white">خيارات التنسيق والإصلاح</h3>
@@ -333,7 +489,7 @@
                 <!-- Auto Align -->
                 <div class="flex items-center justify-between py-3">
                     <div class="pl-3">
-                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">محاذاة تلقائية للفقرات</span>
+                        <span class="block font-semibold text-sm">محاذاة تلقائية للفقرات</span>
                         <span class="block text-xs text-[#86868B]">تحديد الاتجاه حسب اللغة المكتوبة</span>
                     </div>
                     <label class="apple-switch">
@@ -345,7 +501,7 @@
                 <!-- Fix Bidi Punctuation -->
                 <div class="flex items-center justify-between py-3">
                     <div class="pl-3">
-                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">إصلاح علامات الترقيم</span>
+                        <span class="block font-semibold text-sm">إصلاح علامات الترقيم</span>
                         <span class="block text-xs text-[#86868B]">منع قفز الأقواس والنقاط للجهة المقابلة</span>
                     </div>
                     <label class="apple-switch">
@@ -357,8 +513,8 @@
                 <!-- Enable Rich Formatting -->
                 <div class="flex items-center justify-between py-3">
                     <div class="pl-3">
-                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">الجداول والمعادلات والأكواد</span>
-                        <span class="block text-xs text-[#86868B]">تفعيل تنسيقات Markdown وصيغ KaTeX</span>
+                        <span class="block font-semibold text-sm">الجداول والمعادلات والتظليلات</span>
+                        <span class="block text-xs text-[#86868B]">تفعيل ألوان الطبيعة وتنسيقات KaTeX</span>
                     </div>
                     <label class="apple-switch">
                         <input type="checkbox" id="optRichFormat" checked>
@@ -369,7 +525,7 @@
                 <!-- Strip Line Numbers -->
                 <div class="flex items-center justify-between py-3">
                     <div class="pl-3">
-                        <span class="block font-semibold text-[#1D1D1F] dark:text-white text-sm">حذف أرقام السطور</span>
+                        <span class="block font-semibold text-sm">حذف أرقام السطور</span>
                         <span class="block text-xs text-[#86868B]">تنظيف ترقيم البداية مثل 1: أو 1.</span>
                     </div>
                     <label class="apple-switch">
@@ -380,7 +536,7 @@
             </div>
 
             <div class="p-4 border-t border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] flex justify-end">
-                <button id="btnCloseSettingsFooter" class="px-5 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold transition active:scale-95">
+                <button id="btnCloseSettingsFooter" class="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition active:scale-95">
                     حفظ وإغلاق
                 </button>
             </div>
@@ -388,18 +544,18 @@
         </div>
     </div>
 
-    <!-- Apple Sheet Modal (Popup Guide) -->
+    <!-- Help Modal (Popup Guide) -->
     <div id="helpModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
         <div class="apple-card border border-black/[0.08] dark:border-white/[0.12] rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-250">
             
             <div class="p-5 border-b border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#0071E3] text-white flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
                     <div>
-                        <h3 class="text-sm sm:text-base font-semibold text-[#1D1D1F] dark:text-white">دليل التعليمات والرموز المتاحة</h3>
-                        <p class="text-xs text-[#86868B]">طريقة كتابة الأكواد، الجداول، الرموز الرياضية، والتنسيقات</p>
+                        <h3 class="text-sm sm:text-base font-semibold text-[#1D1D1F] dark:text-white">دليل التعليمات وألوان الطبيعة</h3>
+                        <p class="text-xs text-[#86868B]">طريقة استخدام ألوان التظليل، الجداول، والرموز</p>
                     </div>
                 </div>
                 <button id="btnCloseHelp" class="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.15] text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center transition">
@@ -408,18 +564,44 @@
             </div>
 
             <div class="p-6 overflow-y-auto space-y-6 text-sm text-[#1D1D1F] dark:text-[#F5F5F7]">
-                <!-- WhatsApp / Plain Text Tip -->
-                <div class="bg-[#25D366]/10 border border-[#25D366]/30 p-4 rounded-2xl flex items-start gap-3">
-                    <div class="text-[#25D366] text-xl">💬</div>
-                    <div>
-                        <h5 class="text-xs font-bold text-[#1D1D1F] dark:text-white mb-1">ميزة النسخ للواتساب والمحادثات:</h5>
-                        <p class="text-xs text-[#86868B] leading-relaxed">عند الضغط على زر <strong class="text-[#25D366]">"نسخ للواتساب"</strong>، يتم تحويل الجداول تلقائياً إلى قوائم نقطية أنيقة مناسبة للموبايل، وتتحول العناوين والخطوط العريضة إلى صيغة واتساب الأصلية <code class="font-code bg-black/5 dark:bg-white/10 px-1 rounded">*نص عريض*</code>، وتتحول المعادلات الرياضية إلى رموز نصية مقروءة فوراً!</p>
+                
+                <!-- Section: Nature & Earth Color Highlights -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5 text-sm">
+                        <span>🎨</span> ألوان الطبيعة والتظليل الهادئة
+                    </h4>
+                    <p class="text-xs text-[#86868B]">يمكنك تظليل أي كلمة بألوان مستوحاة من البحر والجزر والأرض عبر كتابة اسم اللون قبل النقطتين الرأسيتين:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                        <div class="p-3 rounded-2xl bg-sky-500/10 border border-sky-400/30 flex items-center justify-between">
+                            <span class="font-medium text-sky-800 dark:text-sky-200">🌊 أزرق بحري:</span>
+                            <code class="font-code text-xs">==بحر:نص==</code>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-teal-500/10 border border-teal-400/30 flex items-center justify-between">
+                            <span class="font-medium text-teal-800 dark:text-teal-200">🏝️ فيروزي الجزر:</span>
+                            <code class="font-code text-xs">==جزيرة:نص==</code>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-emerald-600/10 border border-emerald-500/30 flex items-center justify-between">
+                            <span class="font-medium text-emerald-800 dark:text-emerald-200">🌿 طبيعة وزيتوني:</span>
+                            <code class="font-code text-xs">==طبيعة:نص==</code>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-[#8B5A2B]/10 border border-[#8B5A2B]/30 flex items-center justify-between">
+                            <span class="font-medium text-[#5C3A1E] dark:text-[#E6B89C]">☕ بني وترابي دافئ:</span>
+                            <code class="font-code text-xs">==بني:نص==</code>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-[#DDA15E]/15 border border-[#DDA15E]/35 flex items-center justify-between">
+                            <span class="font-medium text-[#7F4F24] dark:text-[#F3DFBF]">🏖️ رمل الشاطئ:</span>
+                            <code class="font-code text-xs">==رمل:نص==</code>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-amber-400/15 border border-amber-400/35 flex items-center justify-between">
+                            <span class="font-medium text-amber-800 dark:text-amber-200">☀️ عسلي كلاسيكي:</span>
+                            <code class="font-code text-xs">==نص==</code>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Code Blocks -->
-                <div class="space-y-2">
-                    <h4 class="font-bold text-[#0071E3] flex items-center gap-1.5 text-sm">
+                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 text-sm">
                         <span>💻</span> الأكواد البرمجية (Code Blocks)
                     </h4>
                     <p class="text-xs text-[#86868B]">اكتب الأكواد بين 3 علامات تنصيص مائلة للحصول على نافذة برمجية بنمط macOS مع زر نسخ مباشر:</p>
@@ -434,15 +616,15 @@ git push<br>
 
                 <!-- Tables -->
                 <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
-                    <h4 class="font-bold text-[#0071E3] flex items-center gap-1.5 text-sm">
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 text-sm">
                         <span>📊</span> طريقة كتابة الجداول (Markdown Tables)
                     </h4>
-                    <p class="text-xs text-[#86868B]">افصل بين الأعمدة برمز <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-[#0071E3]">|</code> واستخدم <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-[#0071E3]">---</code> في السطر الثاني:</p>
+                    <p class="text-xs text-[#86868B]">افصل بين الأعمدة برمز <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-blue-600">|</code> واستخدم <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1 py-0.5 rounded text-blue-600">---</code> في السطر الثاني:</p>
                     <div class="bg-black/[0.04] dark:bg-white/[0.05] p-3 rounded-2xl font-code text-xs text-left" dir="ltr">
-| المادة | الدرجة | التقدير |<br>
+| الجزيرة | البحر | الحالة |<br>
 | :--- | :---: | ---: |<br>
-| رياضيات | 95 | ممتاز |<br>
-| فيزياء | $x = 10$ | جيد جداً |
+| سانتوريني | إيجه | ==بحر:هادئ== |<br>
+| بالي | المحيط | ==طبيعة:خلاب== |
                     </div>
                 </div>
 
@@ -451,8 +633,6 @@ git push<br>
                     <h4 class="font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 text-sm">
                         <span>📐</span> الرموز والمعادلات الرياضية (KaTeX / LaTeX)
                     </h4>
-                    <p class="text-xs text-[#86868B]">اكتب المعادلة بين <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1.5 py-0.5 rounded text-purple-600 dark:text-purple-400">$ ... $</code> للمعادلة المضمنة، أو <code class="font-code bg-black/[0.05] dark:bg-white/[0.1] px-1.5 py-0.5 rounded text-purple-600 dark:text-purple-400">$$ ... $$</code> لعرضها في سطر مستقل:</p>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
                         <div class="bg-black/[0.03] dark:bg-white/[0.04] p-3 rounded-2xl">
                             <span class="block font-semibold mb-1 text-[#86868B]">كسر اعتيادي:</span>
@@ -465,34 +645,10 @@ git push<br>
                     </div>
                 </div>
 
-                <!-- Text Formatting -->
-                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
-                    <h4 class="font-bold text-[#FF9500] flex items-center gap-1.5 text-sm">
-                        <span>✍️</span> تنسيقات النصوص والعناوين
-                    </h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
-                            <span>عناوين رئيسية</span>
-                            <code class="font-code text-[#FF9500]"># أو ## أو ###</code>
-                        </div>
-                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
-                            <span>خط عريض</span>
-                            <code class="font-code text-[#FF9500]">**نص عريض**</code>
-                        </div>
-                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
-                            <span>تحديد وتظليل</span>
-                            <code class="font-code text-[#FF9500]">==نص مميز==</code>
-                        </div>
-                        <div class="bg-black/[0.03] dark:bg-white/[0.04] p-2.5 rounded-xl flex justify-between items-center">
-                            <span>فاصل أفقي</span>
-                            <code class="font-code text-[#FF9500]">---</code>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="p-4 border-t border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] flex justify-end">
-                <button id="btnCloseHelpFooter" class="px-5 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold transition active:scale-95 shadow-[0_2px_8px_rgba(0,113,227,0.3)]">
+                <button id="btnCloseHelpFooter" class="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition active:scale-95 shadow-sm">
                     فهمت، إغلاق
                 </button>
             </div>
@@ -505,8 +661,23 @@ git push<br>
         const LRM = '\u200E';
         const RLM = '\u200F';
         
+        // Theme Configs
+        const THEMES = {
+            ocean: { name: 'نسيم البحر والجزر', icon: '🌊', badge: 'Ocean & Islands' },
+            earth: { name: 'ألوان ترابية وبني', icon: '☕', badge: 'Warm Earth' },
+            forest: { name: 'طبيعة وغابات', icon: '🌿', badge: 'Forest Nature' },
+            default: { name: 'أبل الكلاسيكي', icon: '', badge: 'Apple Slate' }
+        };
+
         // DOM Elements
         const themeToggle = document.getElementById('themeToggle');
+        const btnThemeMenu = document.getElementById('btnThemeMenu');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const activeThemeIcon = document.getElementById('activeThemeIcon');
+        const activeThemeName = document.getElementById('activeThemeName');
+        const themeBadge = document.getElementById('themeBadge');
+        const themeSelectBtns = document.querySelectorAll('.theme-select-btn');
+
         const optAutoAlign = document.getElementById('optAutoAlign');
         const optFixPunctuation = document.getElementById('optFixPunctuation');
         const optRichFormat = document.getElementById('optRichFormat');
@@ -539,6 +710,13 @@ git push<br>
         // Quick Insert Elements
         const btnInsertTable = document.getElementById('btnInsertTable');
         const btnInsertMath = document.getElementById('btnInsertMath');
+        
+        const btnToggleColors = document.getElementById('btnToggleColors');
+        const colorsPalette = document.getElementById('colorsPalette');
+        const btnCloseColors = document.getElementById('btnCloseColors');
+        const arrowColors = document.getElementById('arrowColors');
+        const colorChipBtns = document.querySelectorAll('.color-chip-btn');
+
         const btnToggleSymbols = document.getElementById('btnToggleSymbols');
         const symbolsPalette = document.getElementById('symbolsPalette');
         const btnCloseSymbols = document.getElementById('btnCloseSymbols');
@@ -547,17 +725,96 @@ git push<br>
         
         let forceDirection = 'auto';
 
-        // Theme Toggle
+        // 1. Theme Management (Ocean, Earth, Forest, Apple)
+        function applySiteTheme(themeKey) {
+            const validTheme = THEMES[themeKey] ? themeKey : 'ocean';
+            document.documentElement.classList.remove('theme-ocean', 'theme-earth', 'theme-forest', 'theme-default');
+            document.documentElement.classList.add(`theme-${validTheme}`);
+            
+            const conf = THEMES[validTheme];
+            activeThemeIcon.textContent = conf.icon;
+            activeThemeName.textContent = conf.name;
+            themeBadge.textContent = conf.badge;
+            localStorage.setItem('user-color-theme', validTheme);
+        }
+
+        // Toggle Theme Dropdown
+        btnThemeMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            themeDropdown.classList.add('hidden');
+        });
+
+        themeSelectBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selected = btn.getAttribute('data-theme');
+                applySiteTheme(selected);
+                themeDropdown.classList.add('hidden');
+            });
+        });
+
+        // Initialize Theme from localStorage (Defaulting to serene Ocean & Islands theme)
+        const savedTheme = localStorage.getItem('user-color-theme') || 'ocean';
+        applySiteTheme(savedTheme);
+
+        // Dark / Light Mode Toggle
         themeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
         });
 
-        // Symbols Palette Toggle
+        // 2. Colors Palette Toggle
+        btnToggleColors.addEventListener('click', () => {
+            const isHidden = colorsPalette.classList.contains('hidden');
+            if (isHidden) {
+                colorsPalette.classList.remove('hidden');
+                arrowColors.classList.add('rotate-180');
+                symbolsPalette.classList.add('hidden');
+                arrowSymbols.classList.remove('rotate-180');
+            } else {
+                colorsPalette.classList.add('hidden');
+                arrowColors.classList.remove('rotate-180');
+            }
+        });
+
+        btnCloseColors.addEventListener('click', () => {
+            colorsPalette.classList.add('hidden');
+            arrowColors.classList.remove('rotate-180');
+        });
+
+        // Handle Color Chip Click (Wrap selected text or insert tag)
+        colorChipBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.getAttribute('data-tag');
+                const start = inputText.selectionStart;
+                const end = inputText.selectionEnd;
+                const selectedText = inputText.value.substring(start, end);
+                
+                let replacement = '';
+                if (tag === '') {
+                    replacement = selectedText ? `==${selectedText}==` : `==نص مميز==`;
+                } else {
+                    replacement = selectedText ? `==${tag}:${selectedText}==` : `==${tag}:نص ${btn.textContent.trim()}==`;
+                }
+                
+                const val = inputText.value;
+                inputText.value = val.substring(0, start) + replacement + val.substring(end);
+                inputText.selectionStart = inputText.selectionEnd = start + replacement.length;
+                inputText.focus();
+                processText();
+            });
+        });
+
+        // 3. Symbols Palette Toggle
         btnToggleSymbols.addEventListener('click', () => {
             const isHidden = symbolsPalette.classList.contains('hidden');
             if (isHidden) {
                 symbolsPalette.classList.remove('hidden');
                 arrowSymbols.classList.add('rotate-180');
+                colorsPalette.classList.add('hidden');
+                arrowColors.classList.remove('rotate-180');
             } else {
                 symbolsPalette.classList.add('hidden');
                 arrowSymbols.classList.remove('rotate-180');
@@ -569,7 +826,7 @@ git push<br>
             arrowSymbols.classList.remove('rotate-180');
         });
 
-        // Settings Modal
+        // Modals Open/Close
         btnOpenSettings.addEventListener('click', () => {
             settingsModal.classList.remove('hidden');
             settingsModal.classList.add('flex');
@@ -586,7 +843,6 @@ git push<br>
             if (e.target === settingsModal) closeSettings();
         });
 
-        // Help Modal
         btnOpenHelp.addEventListener('click', () => {
             helpModal.classList.remove('hidden');
             helpModal.classList.add('flex');
@@ -608,11 +864,13 @@ git push<br>
                 closeHelp();
                 closeSettings();
                 symbolsPalette.classList.add('hidden');
+                colorsPalette.classList.add('hidden');
+                themeDropdown.classList.add('hidden');
                 arrowSymbols.classList.remove('rotate-180');
+                arrowColors.classList.remove('rotate-180');
             }
         });
 
-        // Insert text helper
         function insertAtCursor(textToInsert) {
             const start = inputText.selectionStart;
             const end = inputText.selectionEnd;
@@ -624,7 +882,7 @@ git push<br>
         }
 
         btnInsertTable.addEventListener('click', () => {
-            const tableTemplate = `\n| المادة | الدرجة | المعادلة |\n| :--- | :---: | :---: |\n| فيزياء | 98 | $E = mc^2$ |\n| رياضيات | 95 | $\\sqrt{x^2 + y^2}$ |\n`;
+            const tableTemplate = `\n| المادة / الرحلة | الموقع | الحالة والطبيعة |\n| :--- | :---: | ---: |\n| رحلة جزيرة بالي | إندونيسيا | ==جزيرة:مياه فيروزية هادئة== |\n| غابات الألب | سويسرا | ==طبيعة:هواء نقي وأشجار== |\n| واحة الصحراء | مصر | ==بني:رمال وقهوة عربية== |\n`;
             insertAtCursor(tableTemplate);
         });
 
@@ -638,36 +896,39 @@ git push<br>
             });
         });
 
+        // Insert Rich Nature & Sea Example
         window.insertExampleText = function() {
-            inputText.value = `### 🧠 الفكرة الأساسية (كيف يفكر Git؟)
-لكي ترفع أي تعديل على GitHub، تمر العملية بـ **3 مراحل رئيسية**:
+            inputText.value = `# 🌊 تقرير رحلات الجزر وهدوء الطبيعة والألوان الترابية
+
+مرحباً بك! هذا نموذج يوضح **تناسق ألوان الطبيعة الهادئة** وكيف تظهر بأشكال متناسقة وراقية:
 
 ---
 
-#### 1️⃣ التحقق من حالة الملفات:
-\`\`\`bash
-git status
-\`\`\`
+### 🏝️ ألوان البحر والجزر والشواطئ:
+* استمتعنا بمشاهدة ==بحر:أمواج البحر الهادئة ومياهه الصافية== في الصباح الباكر.
+* وتجولنا بين ==جزيرة:جزر المحيط والشعاب المرجانية الفيروزية== الساحرة.
+* والاسترخاء فوق ==رمل:رمال الشاطئ الذهبية الدافئة== وقت الغروب.
 
-#### 2️⃣ تجهيز الملفات (وضعها في صندوق الـ Staging):
-\`\`\`bash
-git add index.html
-\`\`\`
-*(أو يمكنك كتابة \`git add .\` لإضافة كل الملفات دفعة واحدة).*
+### ☕ الألوان الترابية المتناسقة مع البني:
+* جلسة هادئة لتناول ==بني:القهوة العربية بنكهة الكراميل والبندق== بين أحضان الخشب الطبيعي.
+* تناسق مريح يجمع بين درجات البني الدافئ وخيوط شمس العصر الهادئة.
 
-#### 3️⃣ جدول مقارنة وتنسيقات:
-| الأمر | الوظيفة | الأهمية |
+### 🌿 الطبيعة والغابات:
+* مسارات ممتعة بين ==طبيعة:أشجار الصنوبر والزيتون وأوراق الغابة الخضراء==.
+
+#### جدول بيانات وتنسيق رحلات الطبيعة:
+| الوجهة | الطبيعة المحيطة | التقييم |
 | :--- | :---: | ---: |
-| git status | فحص الملفات | عالي جداً |
-| git add . | تجهيز الكل | أساسي |
-| git push | رفع للتخزين السحابي | النهائي |
+| جزيرة المالديف | ==جزيرة:مياه فيروزية== | ممتاز |
+| الغابة السوداء | ==طبيعة:أشجار خضراء كثيفة== | هادئ جداً |
+| واحة سيوة | ==بني:رمال وتربة دافئة== | فريد |
 
-وهنا معادلة رياضية توضيحية:
-$$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
+معادلة فيزيائية توضيحية لسرعة الموجة:
+$$v = \\sqrt{\\frac{g \\lambda}{2\\pi} \\tanh\\left(\\frac{2\\pi d}{\\lambda}\\right)}$$`;
             processText();
         };
 
-        // Apple Segmented Control for Force direction
+        // Segmented Control for Force direction
         function setForceDirection(mode) {
             forceDirection = mode;
             [btnDirAuto, btnDirRtl, btnDirLtr].forEach(btn => {
@@ -679,7 +940,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
             else if (mode === 'rtl') activeBtn = btnDirRtl;
             else if (mode === 'ltr') activeBtn = btnDirLtr;
             
-            activeBtn.className = "py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-[#0071E3] dark:text-blue-400 shadow-sm";
+            activeBtn.className = "py-1 px-3 text-xs font-semibold rounded-lg transition-all duration-200 bg-white dark:bg-[#3A3A3C] text-blue-600 dark:text-blue-400 shadow-sm";
             
             processText();
         }
@@ -712,12 +973,12 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     <span>تم النسخ!</span>
                 `;
-                btnCopy.classList.remove('bg-[#0071E3]', 'hover:bg-[#0077ED]');
+                btnCopy.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                 btnCopy.classList.add('bg-slate-600');
                 
                 setTimeout(() => {
                     btnCopy.innerHTML = originalContent;
-                    btnCopy.classList.add('bg-[#0071E3]', 'hover:bg-[#0077ED]');
+                    btnCopy.classList.add('bg-blue-600', 'hover:bg-blue-700');
                     btnCopy.classList.remove('bg-slate-600');
                 }, 2000);
             }).catch(err => {
@@ -725,7 +986,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
             });
         });
 
-        // 2. WhatsApp & Plain Text Copy Handler
+        // 2. WhatsApp & Plain Text Copy Handler (with Nature & Earth Color Emojis)
         function formatForWhatsAppAndPlainText(text) {
             const lines = text.split('\n');
             const result = [];
@@ -771,7 +1032,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                     line = line.replace(/^\s*\d+[\s:.)\]-]+\s*/, '');
                 }
 
-                // Table conversion to WhatsApp-friendly mobile list
+                // Table conversion to WhatsApp-friendly list
                 const isTableLine = (l) => l.trim().startsWith('|') && l.trim().endsWith('|') && l.includes('|');
                 if (isTableLine(line) && i + 1 < lines.length && isTableLine(lines[i + 1])) {
                     const tableLines = [];
@@ -794,7 +1055,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                         rows.forEach(row => {
                             const rowText = headers.map((h, idx) => {
                                 const val = row[idx] !== undefined ? row[idx] : '';
-                                return `${h}: ${convertMathToPlain(val).replace(/\*\*/g, '')}`;
+                                return `${h}: ${convertMathToPlain(val).replace(/\*\*/g, '').replace(/==[^:]*:(.*?)==/g, '$1')}`;
                             }).join(' | ');
                             result.push(`• ${rowText}`);
                         });
@@ -819,17 +1080,18 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                     continue;
                 }
 
-                // Bold: **text** -> *text*
-                let convertedLine = line.replace(/\*\*(.*?)\*\*/g, '*$1*');
-                convertedLine = convertedLine.replace(/__(.*?)__/g, '*$1*');
+                // Bold
+                let convertedLine = line.replace(/\*\*(.*?)\*\*/g, '*$1*').replace(/__(.*?)__/g, '*$1*');
 
-                // Highlights: ==text== -> 👉 *text*
+                // Highlights with Nature and Sea Emojis
+                convertedLine = convertedLine.replace(/==(بحر|sea|blue):(.*?)==/g, '🌊 *$2*');
+                convertedLine = convertedLine.replace(/==(جزيرة|island|teal):(.*?)==/g, '🏝️ *$2*');
+                convertedLine = convertedLine.replace(/==(طبيعة|nature|green|sage):(.*?)==/g, '🌿 *$2*');
+                convertedLine = convertedLine.replace(/==(بني|brown|coffee|earth):(.*?)==/g, '☕ *$2*');
+                convertedLine = convertedLine.replace(/==(رمل|sand|beige):(.*?)==/g, '🏖️ *$2*');
                 convertedLine = convertedLine.replace(/==(.*?)==/g, '👉 *$1*');
 
-                // Convert math formulas
                 convertedLine = convertMathToPlain(convertedLine);
-
-                // Remove hidden unicode direction marks that mess up WhatsApp cursor
                 convertedLine = convertedLine.replace(/[\u200E\u200F]/g, '');
 
                 result.push(convertedLine);
@@ -896,6 +1158,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                 .replace(/>/g, '&gt;');
         }
 
+        // Inline Markdown Parser with Nature, Sea & Earth Color Highlights
         function parseInlineMarkdown(text) {
             let processed = renderMathInString(text);
 
@@ -903,15 +1166,32 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                 return escapeHtml(processed);
             }
 
-            processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[#0071E3] dark:text-[#2997FF]">$1</strong>');
-            processed = processed.replace(/__(.*?)__/g, '<strong class="font-bold text-[#0071E3] dark:text-[#2997FF]">$1</strong>');
-            
+            // Bold & Italic
+            processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
+            processed = processed.replace(/__(.*?)__/g, '<strong class="font-bold text-blue-600 dark:text-blue-400">$1</strong>');
             processed = processed.replace(/\*([^\*\n]+?)\*/g, '<em class="italic text-[#86868B]">$1</em>');
             processed = processed.replace(/_([^_\n]+?)_/g, '<em class="italic text-[#86868B]">$1</em>');
 
-            processed = processed.replace(/==(.*?)==/g, '<mark class="bg-[#FFD60A]/30 text-[#876500] dark:text-[#FFD60A] px-1.5 py-0.5 rounded-lg font-semibold">$1</mark>');
+            // 1. Sea & Ocean Highlight (==بحر:نص==)
+            processed = processed.replace(/==(بحر|sea|blue):(.*?)==/g, '<mark class="bg-sky-500/15 text-sky-800 dark:text-sky-200 border border-sky-400/35 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$2</mark>');
             
-            processed = processed.replace(/`([^`]+?)`/g, '<code class="font-code text-xs bg-black/[0.05] dark:bg-white/[0.08] px-1.5 py-0.5 rounded-lg text-[#FF2D55] dark:text-[#FF375F] font-semibold" dir="ltr">$1</code>');
+            // 2. Island & Lagoon Teal (==جزيرة:نص==)
+            processed = processed.replace(/==(جزيرة|island|teal):(.*?)==/g, '<mark class="bg-teal-500/15 text-teal-800 dark:text-teal-200 border border-teal-400/35 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$2</mark>');
+            
+            // 3. Nature & Forest Sage Green (==طبيعة:نص==)
+            processed = processed.replace(/==(طبيعة|nature|green|sage):(.*?)==/g, '<mark class="bg-emerald-600/15 text-emerald-800 dark:text-emerald-200 border border-emerald-500/35 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$2</mark>');
+            
+            // 4. Warm Earth & Coffee Brown (==بني:نص==)
+            processed = processed.replace(/==(بني|brown|coffee|earth):(.*?)==/g, '<mark class="bg-[#8B5A2B]/15 text-[#5C3A1E] dark:text-[#E6B89C] border border-[#8B5A2B]/35 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$2</mark>');
+            
+            // 5. Warm Beach Sand (==رمل:نص==)
+            processed = processed.replace(/==(رمل|sand|beige):(.*?)==/g, '<mark class="bg-[#DDA15E]/20 text-[#7F4F24] dark:text-[#F3DFBF] border border-[#DDA15E]/40 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$2</mark>');
+
+            // 6. Classic Honey Amber (==نص==)
+            processed = processed.replace(/==(.*?)==/g, '<mark class="bg-amber-400/20 text-amber-800 dark:text-amber-200 border border-amber-400/35 px-1.5 py-0.5 rounded-lg font-medium shadow-sm">$1</mark>');
+            
+            // Inline Code
+            processed = processed.replace(/`([^`]+?)`/g, '<code class="font-code text-xs bg-black/[0.05] dark:bg-white/[0.08] px-1.5 py-0.5 rounded-lg text-rose-500 font-semibold" dir="ltr">$1</code>');
             
             return processed;
         }
@@ -945,9 +1225,9 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
             const rows = tableLines.slice(2).map(parseCells);
             
             let html = '<div class="overflow-x-auto my-4 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-sm">';
-            html += '<table class="w-full text-sm text-[#1D1D1F] dark:text-[#F5F5F7] border-collapse">';
+            html += '<table class="w-full text-sm border-collapse">';
             
-            html += '<thead class="bg-black/[0.03] dark:bg-white/[0.04] text-[#1D1D1F] dark:text-white font-semibold border-b border-black/[0.06] dark:border-white/[0.08]">';
+            html += '<thead class="bg-black/[0.03] dark:bg-white/[0.04] font-semibold border-b border-black/[0.06] dark:border-white/[0.08]">';
             html += '<tr>';
             headers.forEach((h, i) => {
                 const align = aligns[i] || 'auto';
@@ -1003,7 +1283,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
 
                 const cleanTrimmed = currentLine.replace(/^[\u200E\u200F\s]+/, '').trim();
 
-                // 1. Multiline Code Blocks
+                // 1. Code Blocks
                 if (optRichFormat.checked && cleanTrimmed.startsWith('```')) {
                     const lang = cleanTrimmed.replace(/^```/, '').trim();
                     const codeLines = [];
@@ -1062,11 +1342,11 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                     
                     const headingEl = document.createElement(`h${level}`);
                     const styles = {
-                        1: 'text-2xl font-bold border-b border-black/[0.06] dark:border-white/[0.08] pb-2 mb-3 mt-4 text-[#1D1D1F] dark:text-white',
-                        2: 'text-xl font-bold border-b border-black/[0.04] dark:border-white/[0.06] pb-1.5 mb-2 mt-3 text-[#1D1D1F] dark:text-white',
-                        3: 'text-lg font-bold mb-1.5 mt-2.5 text-[#0071E3] dark:text-[#2997FF]',
-                        4: 'text-base font-bold mb-1 mt-2 text-[#5856D6] dark:text-[#5E5CE6]',
-                        5: 'text-sm font-bold mb-1 mt-1.5 text-[#1D1D1F] dark:text-[#F5F5F7]',
+                        1: 'text-2xl font-bold border-b border-black/[0.06] dark:border-white/[0.08] pb-2 mb-3 mt-4',
+                        2: 'text-xl font-bold border-b border-black/[0.04] dark:border-white/[0.06] pb-1.5 mb-2 mt-3',
+                        3: 'text-lg font-bold mb-1.5 mt-2.5 text-blue-600 dark:text-blue-400',
+                        4: 'text-base font-bold mb-1 mt-2 text-indigo-600 dark:text-indigo-400',
+                        5: 'text-sm font-bold mb-1 mt-1.5',
                         6: 'text-xs font-bold mb-1 mt-1 text-[#86868B]'
                     };
                     headingEl.className = `${styles[level] || styles[3]} ${dir === 'rtl' ? 'text-right' : 'text-left'}`;
@@ -1077,7 +1357,7 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                     continue;
                 }
 
-                // 4. Markdown Tables
+                // 4. Tables
                 const isTableLine = (l) => l.trim().startsWith('|') && l.trim().endsWith('|') && l.includes('|');
                 if (optRichFormat.checked && isTableLine(currentLine) && i + 1 < rawLines.length && isTableLine(rawLines[i + 1])) {
                     const tableBlockLines = [];
@@ -1123,8 +1403,8 @@ $$E = mc^2 \\quad \\text{و} \\quad \\sum_{i=1}^n i = \\frac{n(n+1)}{2}$$`;
                 
                 const div = document.createElement('div');
                 const directionBorder = dir === 'rtl' 
-                    ? 'border-r-2 border-[#0071E3]/40 pr-3 text-right' 
-                    : 'border-l-2 border-[#34C759]/40 pl-3 text-left';
+                    ? 'border-r-2 border-blue-500/40 pr-3 text-right' 
+                    : 'border-l-2 border-emerald-500/40 pl-3 text-left';
                 
                 div.className = `py-1 min-h-[1.75rem] transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02] rounded-xl px-2 -mx-2 ${directionBorder}`;
                 div.style.direction = dir;
