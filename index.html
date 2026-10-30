@@ -287,6 +287,33 @@
             padding: 4px 0;
             margin: 0.6em 0 !important;
         }
+
+        /* English Interactive Reader & Instant Pronunciation Styles */
+        .reader-word {
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 1px 3px;
+            margin: 0 0.5px;
+            transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: text;
+        }
+        .reader-word:hover {
+            background-color: var(--selection-bg, rgba(0, 113, 227, 0.22));
+            color: var(--app-heading);
+            transform: translateY(-1px);
+        }
+        .reader-word.speaking-active {
+            background-color: var(--app-accent) !important;
+            color: var(--app-btn-text, #ffffff) !important;
+            transform: scale(1.08);
+            box-shadow: 0 2px 14px rgba(0, 113, 227, 0.45);
+        }
+
+        #floatingWordCard {
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
     </style>
 </head>
 <body class="min-h-screen transition-colors duration-300">
@@ -358,7 +385,25 @@
     </header>
 
     <!-- Main Container (Centered Focus on Text) -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        
+        <!-- Apple Segmented Navigation Tabs -->
+        <div class="flex justify-center">
+            <div class="bg-black/[0.05] dark:bg-white/[0.08] p-1.5 rounded-2xl flex items-center gap-1.5 shadow-inner max-w-xl w-full border border-black/[0.04] dark:border-white/[0.05]">
+                <button id="tabBtnFormatter" class="flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold rounded-xl transition-all duration-200 bg-white dark:bg-[#2C2C2E] shadow-sm flex items-center justify-center gap-2" style="color: var(--app-accent);">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    <span>مُصلح النصوص والرياضيات</span>
+                </button>
+                <button id="tabBtnReader" class="flex-1 py-2.5 px-4 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <span>قارئ الإنجليزي والنطق الفوري</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">جديد ⚡</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- View 1: Text & Math Formatter -->
+        <div id="viewFormatter" class="space-y-5">
         
         <!-- Apple Focus Toolbar (Quick tools & Nature Colors Palette) -->
         <div class="apple-card px-5 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-sm">
@@ -531,8 +576,183 @@
                 </div>
             </div>
         </div>
+        </div> <!-- End viewFormatter -->
+
+        <!-- View 2: English Fast Reader & Instant Pronunciation -->
+        <div id="viewReader" class="space-y-5 hidden">
+            
+            <!-- Reader Control Toolbar -->
+            <div class="apple-card px-5 py-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-sm">
+                
+                <!-- Speech Voice, Speed & Controls -->
+                <div class="flex items-center flex-wrap gap-2.5">
+                    <!-- Voice Selector Dropdown -->
+                    <div class="flex items-center gap-1.5 bg-black/[0.04] dark:bg-white/[0.06] py-1.5 px-3 rounded-xl text-xs border border-black/[0.04] dark:border-white/[0.05]">
+                        <span class="text-amber-500 font-bold">⚡</span>
+                        <label for="readerVoiceSelect" class="font-semibold text-[#86868B] hidden sm:inline">الصوت:</label>
+                        <select id="readerVoiceSelect" class="bg-transparent font-medium outline-none cursor-pointer text-slate-800 dark:text-slate-100 max-w-[170px] sm:max-w-[220px] truncate" title="اختر صوت النطق">
+                            <option value="">جاري فحص أصوات النظام...</option>
+                        </select>
+                    </div>
+
+                    <!-- Speed / Rate Control Buttons -->
+                    <div class="flex items-center gap-1 bg-black/[0.04] dark:bg-white/[0.06] p-1 rounded-xl text-xs border border-black/[0.04] dark:border-white/[0.05]">
+                        <span class="text-[#86868B] px-1 font-semibold hidden md:inline">السرعة:</span>
+                        <button class="reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-semibold transition hover:bg-black/[0.05] dark:hover:bg-white/[0.1]" data-speed="0.75" title="سرعة بطيئة للتعلم">0.75x</button>
+                        <button class="reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-bold transition bg-white dark:bg-[#3A3A3C] shadow-sm active-speed" style="color: var(--app-accent);" data-speed="1.0" title="سرعة طبيعية">1.0x</button>
+                        <button class="reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-semibold transition hover:bg-black/[0.05] dark:hover:bg-white/[0.1]" data-speed="1.2" title="سرعة معتدلة">1.2x</button>
+                        <button class="reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-semibold transition hover:bg-black/[0.05] dark:hover:bg-white/[0.1]" data-speed="1.5" title="سرعة سريعة">1.5x</button>
+                    </div>
+
+                    <!-- Font Size Adjuster -->
+                    <div class="flex items-center gap-1 bg-black/[0.04] dark:bg-white/[0.06] p-1 rounded-xl text-xs border border-black/[0.04] dark:border-white/[0.05]">
+                        <button id="btnReaderFontDown" class="w-6 h-6 rounded-lg hover:bg-black/[0.05] dark:hover:bg-white/[0.1] font-bold text-xs flex items-center justify-center transition active:scale-95" title="تصغير الخط">A-</button>
+                        <span id="readerFontSizeLabel" class="text-[11px] text-[#86868B] px-1 font-mono">18px</span>
+                        <button id="btnReaderFontUp" class="w-6 h-6 rounded-lg hover:bg-black/[0.05] dark:hover:bg-white/[0.1] font-bold text-sm flex items-center justify-center transition active:scale-95" title="تكبير الخط">A+</button>
+                    </div>
+                </div>
+
+                <!-- Toggles: Auto Speak on select & Click to speak -->
+                <div class="flex items-center flex-wrap gap-4 text-xs font-semibold">
+                    <label class="flex items-center gap-2 cursor-pointer select-none text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white transition">
+                        <input type="checkbox" id="chkAutoSpeakSelect" class="w-4 h-4 rounded text-sky-600 focus:ring-0 cursor-pointer" checked>
+                        <span>نطق فوري عند التحديد ✨</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer select-none text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white transition">
+                        <input type="checkbox" id="chkClickWordToSpeak" class="w-4 h-4 rounded text-sky-600 focus:ring-0 cursor-pointer" checked>
+                        <span>نطق عند النقر 👆</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Main Reader Workspace Card -->
+            <div class="apple-card rounded-3xl overflow-hidden shadow-sm">
+                
+                <!-- Reader Subheader & Action buttons -->
+                <div class="border-b border-black/[0.05] dark:border-white/[0.06] flex flex-wrap justify-between items-center px-6 py-4 bg-black/[0.01] dark:bg-white/[0.02] gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-[#34C759]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#0071E3]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#AF52DE]"></span>
+                        <span class="text-xs font-bold text-[#86868B] mr-2">مساحة القراءة والنطق الفوري</span>
+                        
+                        <!-- Live Speaking Wave Indicator -->
+                        <div id="speakingWaveIndicator" class="hidden items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs font-bold">
+                            <span class="w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
+                            <span>جاري النطق فورياً ⚡</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="btnReaderSample" class="text-xs px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center gap-1.5 active:scale-95 font-medium">
+                            <span>📖 نص إنجليزي تجريبي</span>
+                        </button>
+                        <button id="btnReaderClear" class="text-xs px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center gap-1 active:scale-95 font-medium">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            مسح
+                        </button>
+                        <button id="btnReaderPaste" class="apple-btn-accent text-xs px-4 py-1.5 rounded-full transition flex items-center gap-1.5 shadow-sm active:scale-95 font-medium">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            لصق من الحافظة
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Input Area (Collapsible) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="readerInputText" class="block text-xs font-bold text-[#86868B] uppercase tracking-wider">ألصق النص الإنجليزي هنا:</label>
+                            <button id="btnToggleReaderInput" class="text-xs text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center gap-1 transition">
+                                <span id="labelToggleReaderInput">طي حقل الإدخال للتركيز</span>
+                                <svg id="arrowToggleReaderInput" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                        </div>
+                        <div id="readerInputWrapper" class="transition-all duration-300">
+                            <textarea id="readerInputText" dir="ltr" class="w-full min-h-[130px] p-4 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.015] dark:bg-white/[0.03] focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 focus:bg-white dark:focus:bg-[#1C1C1E] outline-none transition-all duration-200 text-sm md:text-base leading-relaxed resize-y font-sans" placeholder="Paste your English text, article, or novel here... You can start reading below immediately!"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="relative py-1">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="w-full border-t border-black/[0.06] dark:border-white/[0.08]</div>
+                        </div>
+                        <div class="relative flex justify-center text-xs">
+                            <span class="bg-white/95 dark:bg-[#1C1C1E]/95 px-4 text-[#86868B] font-semibold tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border border-black/[0.04] dark:border-white/[0.06]">
+                                <span>📖 وضع القراءة التفاعلي (انقر أو حدد بالماوس لسماع النطق فوراً)</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Reading Presentation Surface -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-[#86868B]">
+                            <span id="readerStatsLabel">عدد الكلمات: 0 | وقت القراءة المقدر: ~0 دقيقة</span>
+                            <span class="text-[11px] bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                                <span>⚡ سرعة فائقة:</span>
+                                <span>نطق فوري مباشر بدون أي بطء أو انتظار</span>
+                            </span>
+                        </div>
+
+                        <!-- Reading Canvas -->
+                        <div id="interactiveReadingArea" dir="ltr" class="relative w-full min-h-[300px] p-6 sm:p-8 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.01] dark:bg-white/[0.015] transition-all text-left font-sans select-text leading-relaxed tracking-normal overflow-y-auto space-y-4">
+                            <!-- Words generated dynamically here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main>
+
+    <!-- Floating Word Card for Pronunciation & Instant Lookup -->
+    <div id="floatingWordCard" class="hidden fixed z-50 apple-card rounded-2xl p-4 shadow-2xl border border-black/[0.08] dark:border-white/[0.12] max-w-sm w-80 animate-in fade-in zoom-in-95 duration-150">
+        <div class="flex items-start justify-between gap-2 mb-2">
+            <div>
+                <div class="flex items-center gap-2">
+                    <h4 id="cardWordTitle" class="text-lg font-bold tracking-tight text-[#1D1D1F] dark:text-white" dir="ltr">word</h4>
+                    <span id="cardPhonetic" class="text-xs text-[#86868B] font-mono" dir="ltr"></span>
+                </div>
+                <span id="cardPartOfSpeech" class="text-[11px] text-sky-600 dark:text-sky-400 font-semibold italic"></span>
+            </div>
+            <button id="btnCloseWordCard" class="w-6 h-6 rounded-full hover:bg-black/[0.06] dark:hover:bg-white/[0.1] text-[#86868B] flex items-center justify-center transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Quick Audio Buttons -->
+        <div class="flex items-center gap-2 my-2.5">
+            <button id="btnCardSpeakNormal" class="flex-1 py-1.5 px-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                <span>استمع مجدداً (1x)</span>
+            </button>
+            <button id="btnCardSpeakSlow" class="py-1.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95" title="نطق بطيء بوضوح تام">
+                <span>🐢</span>
+                <span>0.75x</span>
+            </button>
+        </div>
+
+        <!-- Meaning / Translation box -->
+        <div id="cardTranslationBox" class="mt-2 pt-2 border-t border-black/[0.05] dark:border-white/[0.06] text-xs">
+            <div id="cardMeaningText" class="text-[#86868B] text-xs leading-relaxed max-h-24 overflow-y-auto">
+                جاري فحص المعنى...
+            </div>
+        </div>
+
+        <!-- External Quick Links -->
+        <div class="mt-2.5 pt-2 border-t border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between text-[11px] text-[#86868B]">
+            <a id="cardGoogleTranslateLink" href="#" target="_blank" class="hover:underline flex items-center gap-1" style="color: var(--app-accent);">
+                <span>Google Translate</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+            <a id="cardCambridgeLink" href="#" target="_blank" class="hover:underline flex items-center gap-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                <span>قاموس Cambridge</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="mt-12 py-8 border-t border-black/[0.06] dark:border-white/[0.08] text-center text-xs text-[#86868B] transition-colors">
@@ -711,6 +931,24 @@ git push<br>
                         <div class="bg-black/[0.03] dark:bg-white/[0.04] p-3 rounded-2xl">
                             <span class="block font-semibold mb-1 text-[#86868B]">جذر تربيعي وأس:</span>
                             <code class="font-code text-purple-600 dark:text-purple-400" dir="ltr">$\sqrt{x^2 + y^2}$</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- English Fast Reader & Pronunciation Guide -->
+                <div class="space-y-2 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <h4 class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-sm">
+                        <span>⚡</span> قارئ الإنجليزي السريع والنطق الفوري
+                    </h4>
+                    <p class="text-xs text-[#86868B]">حل مشكلة بطء نطق الكلمات في المتصفحات التقليدية:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04]">
+                            <span class="font-bold text-sky-600 dark:text-sky-400 block mb-1">👆 نطق فوري بالنقر أو التحديد:</span>
+                            <span>انقر على أي كلمة أثناء القراءة أو حددها بالماوس ليتم نطقها في أقل من 20 جزء من الثانية بدون لاج.</span>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04]">
+                            <span class="font-bold text-amber-600 dark:text-amber-400 block mb-1">🐢 النطق البطيء والترجمة:</span>
+                            <span>تظهر بطاقة تتيح لك سماع الكلمة ببطء 0.75x، أو معرفة المعنى وفتح قاموس Cambridge بنقرة واحدة.</span>
                         </div>
                     </div>
                 </div>
@@ -1523,6 +1761,534 @@ $$v = \\sqrt{\\frac{g \\lambda}{2\\pi} \\tanh\\left(\\frac{2\\pi d}{\\lambda}\\r
         optStripLineNumbers.addEventListener('change', processText);
 
         processText();
+
+        // ==========================================
+        // Tab Navigation & English Reader Implementation
+        // ==========================================
+        const tabBtnFormatter = document.getElementById('tabBtnFormatter');
+        const tabBtnReader = document.getElementById('tabBtnReader');
+        const viewFormatter = document.getElementById('viewFormatter');
+        const viewReader = document.getElementById('viewReader');
+
+        function switchAppTab(tabKey) {
+            const isFormatter = tabKey === 'formatter';
+            
+            // Toggle views
+            viewFormatter.classList.toggle('hidden', !isFormatter);
+            viewReader.classList.toggle('hidden', isFormatter);
+
+            // Tab button styles
+            if (isFormatter) {
+                tabBtnFormatter.className = 'flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold rounded-xl transition-all duration-200 bg-white dark:bg-[#2C2C2E] shadow-sm flex items-center justify-center gap-2';
+                tabBtnFormatter.style.color = 'var(--app-accent)';
+                tabBtnReader.className = 'flex-1 py-2.5 px-4 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center gap-2';
+                tabBtnReader.style.color = '';
+            } else {
+                tabBtnReader.className = 'flex-1 py-2.5 px-4 text-xs sm:text-sm font-bold rounded-xl transition-all duration-200 bg-white dark:bg-[#2C2C2E] shadow-sm flex items-center justify-center gap-2';
+                tabBtnReader.style.color = 'var(--app-accent)';
+                tabBtnFormatter.className = 'flex-1 py-2.5 px-4 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white flex items-center justify-center gap-2';
+                tabBtnFormatter.style.color = '';
+
+                // Pre-warm voices & render reader if needed
+                initSpeechVoices();
+                if (!readerInputText.value.trim()) {
+                    loadDefaultReaderSample();
+                }
+            }
+
+            localStorage.setItem('l-to-r-active-tab', tabKey);
+        }
+
+        tabBtnFormatter.addEventListener('click', () => switchAppTab('formatter'));
+        tabBtnReader.addEventListener('click', () => switchAppTab('reader'));
+
+        // Restore active tab
+        const savedActiveTab = localStorage.getItem('l-to-r-active-tab') || 'formatter';
+        if (savedActiveTab === 'reader') {
+            switchAppTab('reader');
+        }
+
+        // ==========================================
+        // Zero-Latency English Voice Engine
+        // ==========================================
+        const readerVoiceSelect = document.getElementById('readerVoiceSelect');
+        const readerSpeedBtns = document.querySelectorAll('.reader-speed-btn');
+        const chkAutoSpeakSelect = document.getElementById('chkAutoSpeakSelect');
+        const chkClickWordToSpeak = document.getElementById('chkClickWordToSpeak');
+        const speakingWaveIndicator = document.getElementById('speakingWaveIndicator');
+
+        const readerInputText = document.getElementById('readerInputText');
+        const readerInputWrapper = document.getElementById('readerInputWrapper');
+        const interactiveReadingArea = document.getElementById('interactiveReadingArea');
+        const readerStatsLabel = document.getElementById('readerStatsLabel');
+
+        const btnReaderSample = document.getElementById('btnReaderSample');
+        const btnReaderClear = document.getElementById('btnReaderClear');
+        const btnReaderPaste = document.getElementById('btnReaderPaste');
+        const btnToggleReaderInput = document.getElementById('btnToggleReaderInput');
+        const labelToggleReaderInput = document.getElementById('labelToggleReaderInput');
+        const arrowToggleReaderInput = document.getElementById('arrowToggleReaderInput');
+
+        const btnReaderFontUp = document.getElementById('btnReaderFontUp');
+        const btnReaderFontDown = document.getElementById('btnReaderFontDown');
+        const readerFontSizeLabel = document.getElementById('readerFontSizeLabel');
+
+        // Floating Card elements
+        const floatingWordCard = document.getElementById('floatingWordCard');
+        const cardWordTitle = document.getElementById('cardWordTitle');
+        const cardPhonetic = document.getElementById('cardPhonetic');
+        const cardPartOfSpeech = document.getElementById('cardPartOfSpeech');
+        const cardMeaningText = document.getElementById('cardMeaningText');
+        const btnCardSpeakNormal = document.getElementById('btnCardSpeakNormal');
+        const btnCardSpeakSlow = document.getElementById('btnCardSpeakSlow');
+        const btnCloseWordCard = document.getElementById('btnCloseWordCard');
+        const cardGoogleTranslateLink = document.getElementById('cardGoogleTranslateLink');
+        const cardCambridgeLink = document.getElementById('cardCambridgeLink');
+
+        let allVoices = [];
+        let selectedReaderVoice = null;
+        let currentReaderSpeed = parseFloat(localStorage.getItem('reader-speed') || '1.0');
+        let currentFontSize = parseInt(localStorage.getItem('reader-font-size') || '18', 10);
+        let currentActiveCardWord = '';
+        let activeSpeakingElement = null;
+        const dictWordCache = new Map();
+
+        // 1. Initialize Voices
+        function initSpeechVoices() {
+            if (!('speechSynthesis' in window)) {
+                readerVoiceSelect.innerHTML = '<option value="">غير مدعوم بالمتصفح</option>';
+                return;
+            }
+
+            allVoices = window.speechSynthesis.getVoices();
+            if (!allVoices || allVoices.length === 0) return;
+
+            // Prioritize English voices, and local offline voices first
+            const enVoices = allVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+            const voicesToUse = enVoices.length > 0 ? enVoices : allVoices;
+
+            // Sort: localService first (local voices start in ~5ms without network latency)
+            voicesToUse.sort((a, b) => {
+                if (a.localService && !b.localService) return -1;
+                if (!a.localService && b.localService) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            const savedVoiceName = localStorage.getItem('reader-preferred-voice');
+            readerVoiceSelect.innerHTML = '';
+
+            voicesToUse.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.name;
+                const isLocal = v.localService;
+                opt.textContent = `${isLocal ? '⚡ ' : ''}${v.name} (${v.lang})`;
+                readerVoiceSelect.appendChild(opt);
+            });
+
+            // Find best voice
+            let matching = null;
+            if (savedVoiceName) {
+                matching = voicesToUse.find(v => v.name === savedVoiceName);
+            }
+            if (!matching) {
+                // Find first local English voice
+                matching = voicesToUse.find(v => v.localService && v.lang.startsWith('en')) || voicesToUse[0];
+            }
+
+            if (matching) {
+                selectedReaderVoice = matching;
+                readerVoiceSelect.value = matching.name;
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            initSpeechVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                initSpeechVoices();
+            };
+        }
+
+        readerVoiceSelect.addEventListener('change', () => {
+            const chosen = allVoices.find(v => v.name === readerVoiceSelect.value);
+            if (chosen) {
+                selectedReaderVoice = chosen;
+                localStorage.setItem('reader-preferred-voice', chosen.name);
+            }
+        });
+
+        // 2. Ultra-Fast Speech Dispatcher
+        function speakWordInstant(rawText, speedOverride = null, targetEl = null) {
+            if (!('speechSynthesis' in window)) return;
+            if (!rawText) return;
+
+            // Clean string: strip outer punctuation
+            const clean = rawText.replace(/^[^\w'-]+|[^\w'-]+$/g, '').trim();
+            if (!clean || !/[a-zA-Z0-9]/.test(clean)) return;
+
+            // Immediately cancel previous utterance to prevent audio queue delay
+            window.speechSynthesis.cancel();
+
+            // Clear previous highlight
+            if (activeSpeakingElement) {
+                activeSpeakingElement.classList.remove('speaking-active');
+                activeSpeakingElement = null;
+            }
+
+            const speed = speedOverride || currentReaderSpeed || 1.0;
+            const utter = new SpeechSynthesisUtterance(clean);
+            utter.rate = speed;
+            utter.pitch = 1.0;
+
+            if (selectedReaderVoice) {
+                utter.voice = selectedReaderVoice;
+                utter.lang = selectedReaderVoice.lang || 'en-US';
+            } else {
+                utter.lang = 'en-US';
+            }
+
+            if (targetEl) {
+                activeSpeakingElement = targetEl;
+                targetEl.classList.add('speaking-active');
+            }
+
+            utter.onstart = () => {
+                speakingWaveIndicator.classList.remove('hidden');
+                speakingWaveIndicator.classList.add('flex');
+            };
+
+            const cleanup = () => {
+                speakingWaveIndicator.classList.add('hidden');
+                speakingWaveIndicator.classList.remove('flex');
+                if (targetEl) {
+                    targetEl.classList.remove('speaking-active');
+                }
+                if (activeSpeakingElement === targetEl) {
+                    activeSpeakingElement = null;
+                }
+            };
+
+            utter.onend = cleanup;
+            utter.onerror = cleanup;
+
+            // 12ms micro-delay prevents Chromium cancel-race bug
+            setTimeout(() => {
+                window.speechSynthesis.speak(utter);
+            }, 12);
+        }
+
+        // 3. Speech Speed Controls
+        function applySpeechSpeed(speed) {
+            currentReaderSpeed = speed;
+            localStorage.setItem('reader-speed', speed.toString());
+            readerSpeedBtns.forEach(btn => {
+                const btnSpeed = parseFloat(btn.dataset.speed);
+                if (Math.abs(btnSpeed - speed) < 0.05) {
+                    btn.className = 'reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-bold transition bg-white dark:bg-[#3A3A3C] shadow-sm';
+                    btn.style.color = 'var(--app-accent)';
+                } else {
+                    btn.className = 'reader-speed-btn py-1 px-2.5 rounded-lg text-xs font-semibold transition hover:bg-black/[0.05] dark:hover:bg-white/[0.1]';
+                    btn.style.color = '';
+                }
+            });
+        }
+        applySpeechSpeed(currentReaderSpeed);
+
+        readerSpeedBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const spd = parseFloat(btn.dataset.speed);
+                applySpeechSpeed(spd);
+            });
+        });
+
+        // 4. Font Size Adjustment
+        function applyFontSize(size) {
+            currentFontSize = Math.max(13, Math.min(32, size));
+            interactiveReadingArea.style.fontSize = `${currentFontSize}px`;
+            readerFontSizeLabel.textContent = `${currentFontSize}px`;
+            localStorage.setItem('reader-font-size', currentFontSize.toString());
+        }
+        applyFontSize(currentFontSize);
+
+        btnReaderFontUp.addEventListener('click', () => applyFontSize(currentFontSize + 2));
+        btnReaderFontDown.addEventListener('click', () => applyFontSize(currentFontSize - 2));
+
+        // 5. Interactive Reader Renderer
+        function renderInteractiveReader() {
+            const raw = readerInputText.value;
+            interactiveReadingArea.innerHTML = '';
+
+            if (!raw || !raw.trim()) {
+                interactiveReadingArea.innerHTML = `
+                    <div class="text-center py-16 text-[#86868B] space-y-3">
+                        <div class="text-4xl">📖</div>
+                        <p class="font-medium text-sm">ألصق نصاً إنجليزياً في الحقل أعلاه لبدء القراءة التفاعلية.</p>
+                        <p class="text-xs text-[#86868B]">أو اضغط على زر <button type="button" class="underline text-sky-600 dark:text-sky-400 font-semibold" onclick="loadDefaultReaderSample()">📖 نص إنجليزي تجريبي</button> لتجربة النطق السريع فوراً.</p>
+                    </div>
+                `;
+                readerStatsLabel.textContent = 'عدد الكلمات: 0 | وقت القراءة المقدر: ~0 دقيقة';
+                return;
+            }
+
+            const words = raw.trim().split(/\s+/).filter(Boolean);
+            const estMinutes = Math.max(1, Math.ceil(words.length / 180));
+            readerStatsLabel.textContent = `عدد الكلمات: ${words.length.toLocaleString('ar-EG')} | وقت القراءة المقدر: ~${estMinutes} دقيقة`;
+
+            const paragraphs = raw.split(/\n+/);
+            paragraphs.forEach(para => {
+                const trimmed = para.trim();
+                if (!trimmed) return;
+
+                const p = document.createElement('p');
+                p.className = 'leading-relaxed select-text';
+
+                // Tokenize words and non-words
+                const tokens = trimmed.split(/(\b[A-Za-z0-9'-]+\b)/g);
+                tokens.forEach(token => {
+                    if (/^[A-Za-z0-9'-]+$/.test(token) && /[A-Za-z]/.test(token)) {
+                        const span = document.createElement('span');
+                        span.className = 'reader-word';
+                        span.textContent = token;
+                        span.setAttribute('data-word', token);
+                        p.appendChild(span);
+                    } else {
+                        p.appendChild(document.createTextNode(token));
+                    }
+                });
+
+                interactiveReadingArea.appendChild(p);
+            });
+        }
+
+        readerInputText.addEventListener('input', renderInteractiveReader);
+
+        // 6. Interactive Reader Click & Selection Listeners
+        // Click on word:
+        interactiveReadingArea.addEventListener('click', (e) => {
+            const wordSpan = e.target.closest('.reader-word');
+            if (!wordSpan) return;
+
+            const word = wordSpan.getAttribute('data-word') || wordSpan.textContent;
+            if (!word) return;
+
+            if (chkClickWordToSpeak.checked) {
+                speakWordInstant(word, null, wordSpan);
+            }
+
+            const rect = wordSpan.getBoundingClientRect();
+            showFloatingCard(word, rect);
+        });
+
+        // Instant Auto-Speak on Mouse Drag / Highlight Selection:
+        let selTimeout = null;
+        function handleSelectionEvent() {
+            clearTimeout(selTimeout);
+            selTimeout = setTimeout(() => {
+                const sel = window.getSelection();
+                if (!sel || sel.isCollapsed) return;
+
+                const selectedText = sel.toString().trim();
+                if (!selectedText || selectedText.length < 2) return;
+
+                // Check if selection is within reading area or input box
+                const inReadingArea = interactiveReadingArea.contains(sel.anchorNode);
+                const inInputText = document.activeElement === readerInputText;
+                if (!inReadingArea && !inInputText) return;
+
+                // Strip leading/trailing symbols
+                const clean = selectedText.replace(/^[^\w'-]+|[^\w'-]+$/g, '').trim();
+                if (!clean || !/[a-zA-Z]/.test(clean)) return;
+
+                const count = clean.split(/\s+/).length;
+                if (chkAutoSpeakSelect.checked && count <= 12) {
+                    speakWordInstant(clean);
+                }
+
+                if (sel.rangeCount > 0) {
+                    const rect = sel.getRangeAt(0).getBoundingClientRect();
+                    showFloatingCard(clean, rect);
+                }
+            }, 75);
+        }
+
+        document.addEventListener('selectionchange', handleSelectionEvent);
+        interactiveReadingArea.addEventListener('mouseup', handleSelectionEvent);
+        readerInputText.addEventListener('mouseup', handleSelectionEvent);
+
+        // 7. Floating Quick Word Card
+        function showFloatingCard(text, rect) {
+            currentActiveCardWord = text;
+            cardWordTitle.textContent = text;
+            cardPhonetic.textContent = '';
+            cardPartOfSpeech.textContent = '';
+            cardMeaningText.innerHTML = '<span class="text-[#86868B] animate-pulse">جاري فحص المعنى والترجمة...</span>';
+
+            cardGoogleTranslateLink.href = `https://translate.google.com/?sl=en&tl=ar&text=${encodeURIComponent(text)}&op=translate`;
+            cardCambridgeLink.href = `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(text.toLowerCase())}`;
+
+            // Calculate card position (fixed)
+            const cardWidth = 320;
+            const cardHeight = 220;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            let left = rect.left;
+            if (left + cardWidth > viewportWidth - 16) {
+                left = viewportWidth - cardWidth - 16;
+            }
+            if (left < 16) left = 16;
+
+            let top = rect.bottom + 8;
+            if (top + cardHeight > viewportHeight - 16) {
+                // Show above selection if not enough space below
+                top = Math.max(16, rect.top - cardHeight - 8);
+            }
+
+            floatingWordCard.style.left = `${left}px`;
+            floatingWordCard.style.top = `${top}px`;
+            floatingWordCard.classList.remove('hidden');
+
+            // Fetch dictionary & translation
+            fetchWordDetails(text);
+        }
+
+        async function fetchWordDetails(word) {
+            const key = word.toLowerCase().trim();
+            if (dictWordCache.has(key)) {
+                applyCardData(dictWordCache.get(key));
+                return;
+            }
+
+            // If it's a single word, query Dictionary API
+            const isSingleWord = !word.includes(' ');
+            let phonetic = '';
+            let partOfSpeech = '';
+            let meaning = '';
+
+            try {
+                if (isSingleWord) {
+                    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (Array.isArray(data) && data.length > 0) {
+                            const entry = data[0];
+                            phonetic = entry.phonetic || (entry.phonetics && entry.phonetics.find(p => p.text)?.text) || '';
+                            if (entry.meanings && entry.meanings.length > 0) {
+                                const m = entry.meanings[0];
+                                partOfSpeech = m.partOfSpeech || '';
+                                if (m.definitions && m.definitions.length > 0) {
+                                    meaning = m.definitions[0].definition || '';
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                // Ignore API failures gracefully
+            }
+
+            // Quick Arabic Translation via lightweight MyMemory API
+            let arabicTranslation = '';
+            try {
+                const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
+                if (transRes.ok) {
+                    const transData = await transRes.json();
+                    if (transData && transData.responseData && transData.responseData.translatedText) {
+                        arabicTranslation = transData.responseData.translatedText;
+                    }
+                }
+            } catch (e) {
+                // Ignore translation failures gracefully
+            }
+
+            const result = {
+                phonetic,
+                partOfSpeech,
+                meaning,
+                arabicTranslation
+            };
+
+            dictWordCache.set(key, result);
+            if (currentActiveCardWord === word) {
+                applyCardData(result);
+            }
+        }
+
+        function applyCardData(data) {
+            if (data.phonetic) {
+                cardPhonetic.textContent = data.phonetic;
+            }
+            if (data.partOfSpeech) {
+                cardPartOfSpeech.textContent = `(${data.partOfSpeech})`;
+            }
+
+            let html = '';
+            if (data.arabicTranslation) {
+                html += `<div class="font-bold text-sm text-[#1D1D1F] dark:text-white mb-1" dir="rtl">الترجمة: <span style="color: var(--app-accent);">${data.arabicTranslation}</span></div>`;
+            }
+            if (data.meaning) {
+                html += `<div class="text-[#86868B] text-xs" dir="ltr"><span class="font-semibold text-slate-700 dark:text-slate-300">Definition:</span> ${data.meaning}</div>`;
+            }
+            if (!html) {
+                html = `<div class="text-[#86868B] text-xs">اضغط على Google Translate أو Cambridge أدناه لمزيد من التفاصيل والأمثلة.</div>`;
+            }
+
+            cardMeaningText.innerHTML = html;
+        }
+
+        btnCardSpeakNormal.addEventListener('click', () => {
+            speakWordInstant(currentActiveCardWord, 1.0);
+        });
+
+        btnCardSpeakSlow.addEventListener('click', () => {
+            speakWordInstant(currentActiveCardWord, 0.75);
+        });
+
+        btnCloseWordCard.addEventListener('click', () => {
+            floatingWordCard.classList.add('hidden');
+        });
+
+        // Hide floating card when clicking outside
+        document.addEventListener('mousedown', (e) => {
+            if (!floatingWordCard.classList.contains('hidden') && 
+                !floatingWordCard.contains(e.target) && 
+                !e.target.closest('.reader-word')) {
+                floatingWordCard.classList.add('hidden');
+            }
+        });
+
+        // 8. Sample Text, Paste, Clear & Toggle Controls
+        window.loadDefaultReaderSample = function() {
+            readerInputText.value = `The human brain possesses an extraordinary capacity known as neuroplasticity—the remarkable ability of neural pathways to reorganize, adapt, and strengthen throughout your entire life.
+
+Whenever you immerse yourself in reading sophisticated literature, your cognitive faculties actively decipher unfamiliar vocabulary and complex syntax. Deliberate practice and curiosity transform challenging words into intuitive knowledge, expanding both your linguistic comprehension and your expressive articulation.`;
+            renderInteractiveReader();
+        };
+
+        btnReaderSample.addEventListener('click', () => {
+            loadDefaultReaderSample();
+        });
+
+        btnReaderClear.addEventListener('click', () => {
+            readerInputText.value = '';
+            renderInteractiveReader();
+            floatingWordCard.classList.add('hidden');
+        });
+
+        btnReaderPaste.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                readerInputText.value = text;
+                renderInteractiveReader();
+            } catch (err) {
+                readerInputText.focus();
+            }
+        });
+
+        btnToggleReaderInput.addEventListener('click', () => {
+            const isHidden = readerInputWrapper.classList.toggle('hidden');
+            labelToggleReaderInput.textContent = isHidden ? 'إظهار حقل الإدخال' : 'طي حقل الإدخال للتركيز';
+            arrowToggleReaderInput.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
     </script>
 </body>
 </html>
